@@ -1,11 +1,33 @@
+##~---------------------------------------------------------------------------##
+##                               *       +                                    ##
+##                         '                  |                               ##
+##                     ()    .-.,="``"=.    - o -                             ##
+##                           '=/_       \     |                               ##
+##                        *   |  '=._    |                                    ##
+##                             \     `=./`,        '                          ##
+##                          .   '=.__.=' `='      *                           ##
+##                 +                         +                                ##
+##                      O      *        '       .                             ##
+##                                                                            ##
+##  File      : $PROFILE                                                      ##
+##  Project   : pwsh-dots                                                     ##
+##  Date      : 2023-08-11                                                    ##
+##  License   : GPLv3                                                         ##
+##  Author    : mateus.digital <hello@mateus.digital>                         ##
+##  Copyright : mateus.digital - 2023                                         ##
+##                                                                            ##
+##  Description :                                                             ##
+##    Dot files for windows machines.                                         ##
+##---------------------------------------------------------------------------~##
+
+
 ##
 ## Environment Vars.
 ##
 
 ##------------------------------------------------------------------------------
 $env:POWERSHELL_TELEMETRY_OPTOUT = 1; ## Don't track us.
-$env:SHLIB_IS_VERSBOSE = 0; ## We want a talkative shlib.
-$env:DOTS_IS_VERSBOSE = 0; ## We dont' want a talkative dots.
+$env:DOTS_IS_VERSBOSE            = 0; ## We dont' want a talkative dots.
 
 ##------------------------------------------------------------------------------
 $env:EDITOR = "code";
@@ -23,14 +45,26 @@ $DOTS_PS_DIR = "${HOME}/.powershell"; ## Powershell scripts site.
 
 $DOTS_TEMP_DIR = if ($IsWindows) {
     $env:TEMP
-}
-else {
+} else {
     "/tmp"
 };
 
-## Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
-## Documents\PowerShell\Microsoft.PowerShell_profile.ps1
-## C:\Users\mateus - unakin\Documents\PowerShell\Microsoft.VSCode_profile.ps1
+##
+## Profiles
+##
+
+function make-all-profiles-source-pwsh()
+{
+    $pwsh    = "$HOME/Documents/PowerShell/Microsoft.PowerShell_profile.ps1";
+    $windows = "$HOME/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1";
+    $vscode  = "$HOME/Documents/PowerShell/Microsoft.VSCode_profile.ps1";
+
+    echo "if(Test-Path '$pwsh') { . '$pwsh'; }" | Out-File -FilePath "$windows";
+    echo "if(Test-Path '$pwsh') { . '$pwsh'; }" | Out-File -FilePath "$vscode";
+
+    echo "Done...";
+}
+
 
 
 ##
@@ -38,18 +72,18 @@ else {
 ##
 
 ##------------------------------------------------------------------------------
-## There's a bunch of aliases that Microsoft adds to the Powershell runtime 
+## There's a bunch of aliases that Microsoft adds to the Powershell runtime
 ## that's quite useful when you don't have the access to the coreutils tool.
 ## Moreover that aliases are not an 1:1 match to the original coreutils, which makes
-## the behaviour acceptable on the command line - due the muscle memory - but 
-## very troublesome to use in scripts. 
-## I decided to use all the gnu coreutils tools in our scripts and tools in 
-## all platforms. 
-## This means that we need to unset a bunch of aliases here to make the things 
+## the behaviour acceptable on the command line - due the muscle memory - but
+## very troublesome to use in scripts.
+## I decided to use all the gnu coreutils tools in our scripts and tools in
+## all platforms.
+## This means that we need to unset a bunch of aliases here to make the things
 ## works as intent, since alias seems to have precedence over the $PATH.
-## 
-## WARNING: 
-##    THIS HAVE THE POSSIBILITY OF BREAK OTHER STUFF THAT *** WRONGLY *** 
+##
+## WARNING:
+##    THIS HAVE THE POSSIBILITY OF BREAK OTHER STUFF THAT *** WRONGLY ***
 ##    DEPENDS ON THOSE ALIASES!!!!
 ##
 ## mmesquita - 22-08-29
@@ -78,7 +112,7 @@ function cd($target_path = "") {
     ## @notice(stdmatt): This can be done just by calling sh_pushd and popd...
     ## maybe one day I'll move it - 22-04-08 @ guaruja
 
-    ## @notice(mateusdigital): HAHA so happy to see this above comment :) 
+    ## @notice(mateusdigital): HAHA so happy to see this above comment :)
     ## Even if pwsh does that already I'll let this here as a piece of history!
     ## Working in a pure windows environment ,4nai, so I'll need to go back to powershell.
     if ($target_path -eq "") {
@@ -131,7 +165,7 @@ function files() {
 
 
 ##
-## Network 
+## Network
 ##
 
 ##------------------------------------------------------------------------------
@@ -183,12 +217,12 @@ function path-list() {
 
 ##------------------------------------------------------------------------------
 $env:PATH_DEFAULT = (_get_default_PATH);
-$env:PATH = (_configure_PATH);
+$env:PATH         = (_configure_PATH);
 
 
-## 
-## Version 
-## 
+##
+## Version
+##
 
 ##------------------------------------------------------------------------------
 function dots-version() {
@@ -223,27 +257,28 @@ function git-bash() {
 ##
 
 ##------------------------------------------------------------------------------
-function g() {
-    git $args;
-}
+function g()  { git        $args; }
+function gp() { git push   $args; }
+function gs() { git status $args; }
+function gl() { git log    $args; }
+
+function gg() { & gitui.exe $args; }
 
 ##------------------------------------------------------------------------------
-function gg() {
-    & gitui.exe $args;
+function dots() {
+    $dots_dir = "$HOME/pwsh-dots.git";
+    git --git-dir="$dots_dir" --work-tree="$HOME" $args;
 }
 
-function gp() {
-    git push $args;
+
+function d()  { dots s };
+function ds() { dots s };
+function dp() { dots p };
+
+function dg() {
+    $dots_dir = "$HOME/pwsh-dots.git";
+    gitui --directory="$dots_dir" --workdir="$HOME";
 }
-
-function gs() {
-    git status $args;
-}
-
-function gl() {
-    git log $args;
-};
-
 
 ##
 ## Prompt
@@ -260,7 +295,7 @@ function __update_ps1_icon {
 }
 
 function __update_ps1_ssh {
-    if($env:SSH_CONNECTION) { 
+    if($env:SSH_CONNECTION) {
         return "-ssh";
     }
 
@@ -319,19 +354,18 @@ function _update_prompt()
         $subpath = $location.Path.Substring($env:USERPROFILE.Length);
         $location = "~${subpath}";
     }
-    
-    if ($git_info.Length -gt 0) { 
+
+    if ($git_info.Length -gt 0) {
         $git_info = " - (${git_info}) - ";
-    } else { 
+    } else {
         $git_info = " - ";
     }
 
     return "(${location})${git_info}(${user}@${hostname}${_PS1_OS_ICON}) - (${_PS1_IP_ADDRESS}${_PS1_IS_USING_SSH})`n${smile_face}";
 }
 
-function prompt() 
+function prompt()
 {
     Write-Host "$(_update_prompt)" -NoNewline;
     return " ";
 }
-

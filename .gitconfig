@@ -1,0 +1,181 @@
+##
+## First version based upon:
+##    https://raw.githubusercontent.com/mathiasbynens/dotfiles/main/.gitconfig ##
+##
+##
+## Dependencies:
+##    - peco
+##
+
+
+[alias]
+    ## Branch
+    ##--------------------------------------------------------------------------
+    curr-branch   = rev-parse --abbrev-ref HEAD;
+    change-branch = "!f() { git-change-branch.sh  \"$@\"; }; f";
+    merge-branch  = "!f() { git-merge.sh          \"$@\"; }; f";
+    create-branch = checkout -b;
+
+    ## Deprecated....
+    branch-name   = curr-branch
+
+    remove-branch = "!f() {                    \
+        branch_name=$1;                        \
+        echo "Deleting branch: $branch_name";  \
+        git branch      --delete $branch_name; \
+        git push origin --delete $branch_name; \
+        echo "Deleted...";                     \
+    }; f"
+
+    ## depends on: remove-branch
+    remove-merged-branches = "!git branch --merged | grep -v '*' | xargs -n 1 git remove-branch";
+
+    ## Clone
+    ##--------------------------------------------------------------------------
+    clone-recursive = clone --recursive;
+
+    ## Commit
+    ##--------------------------------------------------------------------------
+    add-untracked = "!f() { git add $(git status -su | grep "??" | tr -d "??" | peco); }; f"
+    amend = commit --amend --reuse-message=HEAD
+
+    ## Info
+    ##--------------------------------------------------------------------------
+    list-alias    = "!f() { git-aliases.sh;}; f";
+    list-alia    = list-alias;
+    list-aliases = list-alias;
+
+    list-branches = branch --all;
+    list-branch   = list-branches;
+
+    list-tags    = tag -l
+
+    list-remotes = remote --verbose
+    list-subs    = "!(git config --file $(git root)/.gitmodules --name-only --get-regexp path)" ## @XXX: Remote the .path from the subodules...
+
+    ## Last X lines in a tree
+    whoami       = config      user.email
+    contributors = shortlog  --summary --numbered
+    root         = rev-parse --show-toplevel
+    url          = config    --get remote.origin.url
+    date-of      = log       --diff-filter=A --follow --format=%ad  --date=format:"%Y-%m-%d" --reverse --
+
+    tree = log --oneline --decorate --graph --all
+
+	lg = lg1;
+    lg1 = lg1-specific --all
+    lg2 = lg2-specific --all
+    lg3 = lg3-specific --all
+
+    lg1-specific = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)'
+    lg2-specific = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+    lg3-specific = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset) %C(bold cyan)(committed: %cD)%C(reset) %C(auto)%d%C(reset)%n''          %C(white)%s%C(reset)%n''          %C(dim white)- %an <%ae> %C(reset) %C(dim white)(committer: %cn <%ce>)%C(reset)'
+
+    ## Push / Pull
+    ##--------------------------------------------------------------------------
+    pull-all = pull --recurse-submodules
+
+    ## MISC
+    ##--------------------------------------------------------------------------
+    update-submodules = submodule update --init --recursive;
+
+    ## Single Letter
+    ##--------------------------------------------------------------------------
+    a = list-alias;
+    b = create-branch
+    cb= change-branch;
+    d = diff;
+    g = "!f() { gitui "$@";    }; f"; l = log --pretty=oneline -n 10 --graph --abbrev-commit
+    m = "!f() { git-merge.sh;  }; f";
+    p = "!git push --set-upstream origin $(git branch-name);";
+    s = status -s;
+    t = tree;
+
+    ## Status
+    ##--------------------------------------------------------------------------
+    ss = status -su;
+    sss = status -su; ## @notice: Don't want do get an error cause miss key...
+
+[apply]
+    whitespace = fix
+
+[branch]
+    # Show most recently changed branches first.
+    sort = -committerdate
+
+[core]
+    excludesfile = ~/.gitignore
+    editor       = $EDITOR
+    autocrlf     = false
+
+    # Treat spaces before tabs and all kinds of trailing whitespace as an error.
+    # [default] trailing-space: looks for spaces at the end of a line
+    # [default] space-before-tab: looks for spaces before tabs at the beginning of a line
+    whitespace = space-before-tab,-indent-with-non-tab,trailing-space
+
+    # Make `git rebase` safer on macOS.
+    # More info: <http://www.git-tower.com/blog/make-git-rebase-safe-on-osx/>
+    trustctime = false
+    # Prevent showing files whose names contain non-ASCII symbols as unversioned.
+    # http://michael-kuehnel.de/git/2014/11/21/git-mac-osx-and-german-umlaute.html
+    precomposeunicode = false
+    # Speed up commands involving untracked files such as `git status`.
+    # https://git-scm.com/docs/git-update-index#_untracked_cache
+    untrackedCache = true
+
+[color]
+    ui = auto
+
+[credential]
+    helper = cache --timeout=86400
+
+[diff]
+    renames = copies
+
+[init]
+    defaultBranch = main
+
+[merge]
+    # Include summaries of merged commits in newly created merge commit messages
+    log = true
+
+[push]
+    # https://git-scm.com/docs/git-config#git-config-pushdefault
+    default = simple
+    # Make `git push` push relevant annotated tags when pushing branches out.
+    followTags = true
+    autoSetupRemote = true
+
+[pull]
+    rebase = false
+
+[user]
+    name  = mateusdigital
+    email = mateus@cosmicpig.digital ## @todo: Change the email.
+
+
+##
+## Colors
+##
+
+[color "branch"]
+    current = yellow reverse
+    local   = yellow
+    remote  = green
+
+[color "diff"]
+    meta = yellow  bold
+    frag = magenta bold # line info
+    old  = red          # deletions
+    new  = green        # additions
+
+[color "status"]
+    added     = green
+    changed   = yellow
+    deleted   = red
+    untracked = white
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

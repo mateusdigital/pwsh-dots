@@ -292,7 +292,9 @@ function gg() { & gitui.exe $args; }
 ##------------------------------------------------------------------------------
 function dots() {
     $dots_dir = "$HOME/pwsh-dots.git";
-    git --git-dir="$dots_dir" --work-tree="$HOME" $args;
+    $gitignore_path = "$HOME/.config/dots-gitignore";
+
+    git -c core.excludesFile="$gitignore_path" --git-dir="$dots_dir" --work-tree="$HOME" $args;
 }
 
 

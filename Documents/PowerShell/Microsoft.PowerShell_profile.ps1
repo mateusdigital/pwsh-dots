@@ -39,15 +39,17 @@ $env:VISUAL = "code";
 ##
 
 ##------------------------------------------------------------------------------
-$DOTS_BIN_DIR = "${HOME}/.bin"; ## The location of our custom binaries - It'll be 1st on PATH.
+$DOTS_BIN_DIR    = "${HOME}/.bin"; ## The location of our custom binaries - It'll be 1st on PATH.
 $DOTS_CONFIG_DIR = "${HOME}/.config"; ## General configuration site.
-$DOTS_PS_DIR = "${HOME}/.powershell"; ## Powershell scripts site.
+$DOTS_PS_DIR     = "${HOME}/.powershell"; ## Powershell scripts site.
 
 $DOTS_TEMP_DIR = if ($IsWindows) {
     $env:TEMP
 } else {
     "/tmp"
 };
+
+
 
 ##
 ## Profiles
@@ -156,6 +158,7 @@ function cd($target_path = "") {
 function f() {
     files $arsg;
 }
+
 function files() {
     ## Open the Filesystem Manager into a given path.
     ## If no path was given open the current dir.
@@ -207,6 +210,7 @@ function show-wifi-password() {
 ##
 ## PATH
 ##
+
 ##------------------------------------------------------------------------------
 function _get_default_PATH() {
     if (-not($env:PATH_DEFAULT)) {

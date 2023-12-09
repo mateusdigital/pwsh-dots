@@ -1,0 +1,35 @@
+.ssh
+.vscode/
+
+AppData/
+Application Data/
+Contacts/
+Cookies/
+Desktop/
+Documents/
+Documents/
+Documents/
+Downloads/
+Favorites/
+Links/
+Local Settings/
+Music/
+My Documents/
+NetHood/
+OneDrive/
+Pictures/
+PrintHood/
+Projects/
+Recent/
+Saved Games/
+Searches/
+SendTo/
+Start Menu/
+Templates/
+Videos/
+
+
+NTUSER.DAT*
+ntuser*
+
+pwsh-dots.git/

@@ -53,11 +53,22 @@ $DOTS_TEMP_DIR = if ($IsWindows) {
 ## Profiles
 ##
 
+##------------------------------------------------------------------------------
+$DOTS_PROFILE = "$HOME/Documents/PowerShell/Microsoft.PowerShell_profile.ps1";
+
+
+##------------------------------------------------------------------------------
 function make-all-profiles-source-pwsh()
 {
     $pwsh    = "$HOME/Documents/PowerShell/Microsoft.PowerShell_profile.ps1";
     $windows = "$HOME/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1";
     $vscode  = "$HOME/Documents/PowerShell/Microsoft.VSCode_profile.ps1";
+
+    $windows_dirname = Split-Path -Parent -Path "$windows";
+    $vscode_dirname = Split-Path -Parent -Path "$vscode";
+
+    New-Item -Type Directory -Path "$windows_dirname" 2>$null;
+    New-Item -Type Directory -Path "$vscode_dirname"  2>$null;
 
     echo "if(Test-Path '$pwsh') { . '$pwsh'; }" | Out-File -FilePath "$windows";
     echo "if(Test-Path '$pwsh') { . '$pwsh'; }" | Out-File -FilePath "$vscode";
@@ -65,6 +76,20 @@ function make-all-profiles-source-pwsh()
     echo "Done...";
 }
 
+##------------------------------------------------------------------------------
+function edit-profile()
+{
+    if($args.Count -eq 0) {
+        code "$PROFILE";
+    } else {
+        code $args;
+    }
+}
+
+function edit-master-profile()
+{
+    code "$DOTS_PROFILE";
+}
 
 
 ##

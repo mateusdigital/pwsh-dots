@@ -1,5 +1,7 @@
 .ssh
 .vscode/
+.bin/
+
 
 AppData/
 Application Data/
@@ -33,3 +35,4 @@ NTUSER.DAT*
 ntuser*
 
 pwsh-dots.git/
+.stdmatt

@@ -400,3 +400,13 @@ function prompt()
     Write-Host "$(_update_prompt)" -NoNewline;
     return " ";
 }
+
+
+##
+##
+##
+## -----------------------------------------------------------------------------
+function yt()
+{
+    yt-dlp.exe $args;
+}

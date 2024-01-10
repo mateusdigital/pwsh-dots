@@ -1,7 +1,9 @@
-.ssh
+.ssh/
 .vscode/
 .bin/
-
+.cache/
+.dotnet/
+.nuget/
 
 AppData/
 Application Data/
@@ -29,10 +31,12 @@ SendTo/
 Start Menu/
 Templates/
 Videos/
-
+source/
 
 NTUSER.DAT*
 ntuser*
+.lesshst
 
 pwsh-dots.git/
 .stdmatt
+.config/gosh

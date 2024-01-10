@@ -60,8 +60,7 @@ $DOTS_PROFILE = "$HOME/Documents/PowerShell/Microsoft.PowerShell_profile.ps1";
 
 
 ##------------------------------------------------------------------------------
-function make-all-profiles-source-pwsh()
-{
+function make-all-profiles-source-pwsh() {
     $pwsh    = "$HOME/Documents/PowerShell/Microsoft.PowerShell_profile.ps1";
     $windows = "$HOME/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1";
     $vscode  = "$HOME/Documents/PowerShell/Microsoft.VSCode_profile.ps1";
@@ -79,8 +78,7 @@ function make-all-profiles-source-pwsh()
 }
 
 ##------------------------------------------------------------------------------
-function edit-profile()
-{
+function edit-profile() {
     if($args.Count -eq 0) {
         code "$PROFILE";
     } else {
@@ -88,8 +86,7 @@ function edit-profile()
     }
 }
 
-function edit-master-profile()
-{
+function edit-master-profile() {
     code "$DOTS_PROFILE";
 }
 
@@ -229,6 +226,7 @@ function _configure_PATH() {
         "${DOTS_BIN_DIR}/dots/win32/coreutils-5.3.0-bin/bin",
         "${DOTS_BIN_DIR}/dots/win32/findutils-4.2.20-2-bin/bin",
         "${DOTS_BIN_DIR}/dots/win32/ProcessExplorer",
+        "$HOME/.stdmatt/bin",
         "${env:PATH_DEFAULT}"
     )
 
@@ -295,16 +293,20 @@ function gg() { & gitui.exe $args; }
 
 ##------------------------------------------------------------------------------
 function dots() {
-    $dots_dir = "$HOME/pwsh-dots.git";
+    $dots_dir       = "$HOME/pwsh-dots.git";
     $gitignore_path = "$HOME/.config/dots-gitignore";
 
-    git -c core.excludesFile="$gitignore_path" --git-dir="$dots_dir" --work-tree="$HOME" $args;
+    git -c core.excludesFile="$gitignore_path" `
+        --git-dir="$dots_dir"                  `
+        --work-tree="$HOME"                    `
+         $args;
+
 }
 
 
-function d()  { dots s };
-function ds() { dots s };
-function dp() { dots p };
+function d()  { dots s $args };
+function ds() { dots s $args };
+function dp() { dots p $args };
 
 function dg() {
     $dots_dir = "$HOME/pwsh-dots.git";
@@ -370,8 +372,7 @@ $_PS1_OS_ICON = $(__update_ps1_icon);
 $_PS1_IS_USING_SSH = $(__update_ps1_ssh);
 
 ##------------------------------------------------------------------------------
-function _update_prompt()
-{
+function _update_prompt() {
     $last_cmd_sucessfull = $?
     $location = Get-Location
     $user = $env:USERNAME
@@ -395,8 +396,7 @@ function _update_prompt()
     return "(${location})${git_info}(${user}@${hostname}${_PS1_OS_ICON}) - (${_PS1_IP_ADDRESS}${_PS1_IS_USING_SSH})`n${smile_face}";
 }
 
-function prompt()
-{
+function prompt() {
     Write-Host "$(_update_prompt)" -NoNewline;
     return " ";
 }

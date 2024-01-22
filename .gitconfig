@@ -181,3 +181,6 @@
 	required = true
 [safe]
 	directory = *
+[gui]
+	fontui = -family \"Segoe UI\" -size 10 -weight normal -slant roman -underline 0 -overstrike 0
+	fontdiff = -family \"Courier New\" -size 11 -weight normal -slant roman -underline 0 -overstrike 0

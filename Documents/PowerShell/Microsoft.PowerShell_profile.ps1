@@ -289,7 +289,8 @@ function gp() { git push   $args; }
 function gs() { git status $args; }
 function gl() { git log    $args; }
 
-function gg() { & gitui.exe $args; }
+function gg() { git gui $args; }
+function ggg() { & gitui.exe $args; }
 
 ##------------------------------------------------------------------------------
 function dots() {

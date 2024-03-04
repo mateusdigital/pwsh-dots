@@ -407,7 +407,36 @@ function prompt() {
 ##
 ##
 ## -----------------------------------------------------------------------------
-function yt()
-{
+function yt() {
     yt-dlp.exe $args;
+}
+
+
+##
+##
+##
+
+## -----------------------------------------------------------------------------
+function touch_all_files() {
+    # Set the path to the folder whose files' dates you want to update
+    $folderPath = $PWD.Path;
+
+    # Get all files in the folder and its subfolders recursively
+    $files = Get-ChildItem -Path $folderPath -Recurse -File
+
+    # Get the current date and time
+    $currentDateTime = Get-Date
+
+    # Loop through each file and update its creation date, modified date, and access date
+    foreach ($file in $files) {
+        # Update creation date
+        $file.CreationTime = $currentDateTime
+        # Update modified date
+        $file.LastWriteTime = $currentDateTime
+        # Update access date
+        $file.LastAccessTime = $currentDateTime
+    }
+
+    Write-Host "All files' dates have been updated to the current time."
+
 }

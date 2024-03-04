@@ -1,10 +1,19 @@
+## Application Stuff.
+.bash_history
+.android/
+
+
 .ssh/
 .vscode/
 .bin/
 .cache/
 .dotnet/
 .nuget/
+.config/git/
+.gradle/
+.lesshst
 
+## Windows Folders
 AppData/
 Application Data/
 Contacts/
@@ -32,11 +41,12 @@ Start Menu/
 Templates/
 Videos/
 source/
-
 NTUSER.DAT*
 ntuser*
-.lesshst
 
+
+## Other things...
 pwsh-dots.git/
+.openshot_qt/
 .stdmatt
 .config/gosh

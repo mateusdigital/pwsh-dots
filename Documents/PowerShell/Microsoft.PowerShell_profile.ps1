@@ -14,7 +14,7 @@
 ##  Date      : 2023-08-11                                                    ##
 ##  License   : GPLv3                                                         ##
 ##  Author    : mateus.digital <hello@mateus.digital>                         ##
-##  Copyright : mateus.digital - 2023                                         ##
+##  Copyright : mateus.digital - 2023, 2024                                   ##
 ##                                                                            ##
 ##  Description :                                                             ##
 ##    Dot files for windows machines.                                         ##
@@ -66,7 +66,7 @@ function make-all-profiles-source-pwsh() {
     $vscode  = "$HOME/Documents/PowerShell/Microsoft.VSCode_profile.ps1";
 
     $windows_dirname = Split-Path -Parent -Path "$windows";
-    $vscode_dirname = Split-Path -Parent -Path "$vscode";
+    $vscode_dirname  = Split-Path -Parent -Path "$vscode";
 
     New-Item -Type Directory -Path "$windows_dirname" 2>$null;
     New-Item -Type Directory -Path "$vscode_dirname"  2>$null;
@@ -171,8 +171,8 @@ function files() {
     elseif ($IsMacOS) {
         $file_manager = "open";
     }
-    ## @todo(stdmatt): Add for linux someday... at 2022-03-04, 15:54
 
+    ## @todo(stdmatt): Add for linux someday... at 2022-03-04, 15:54
     if ($file_manager -eq "") {
         sh_log_fatal("No file manager was found - Aborting...");
         return;
@@ -195,14 +195,15 @@ function files() {
 
 ##------------------------------------------------------------------------------
 function show-wifi-password() {
-    if (-not$IsWindows) {
-        sh_log "Not implemented for non-windows";
+    if (-not $IsWindows) {
+        echo "Not implemented for non-windows";
         return;
     }
 
     $wifi_name = $args[0];
     netsh wlan show profile "${wifi_name}" key = clear;
 }
+
 
 ##
 ## PATH
@@ -300,19 +301,16 @@ function dots() {
     git -c core.excludesFile="$gitignore_path" `
         --git-dir="$dots_dir"                  `
         --work-tree="$HOME"                    `
-         $args;
+          $args;
 
 }
 
 
-function d()  { dots s $args };
-function ds() { dots s $args };
-function dp() { dots p $args };
+function d()  { dots s };
+function ds() { dots s };
+function dp() { dots p };
+function dg() { dots gui };
 
-function dg() {
-    $dots_dir = "$HOME/pwsh-dots.git";
-    gitui --directory="$dots_dir" --workdir="$HOME";
-}
 
 ##
 ## Prompt
@@ -375,9 +373,11 @@ $_PS1_IS_USING_SSH = $(__update_ps1_ssh);
 ##------------------------------------------------------------------------------
 function _update_prompt() {
     $last_cmd_sucessfull = $?
+
     $location = Get-Location
-    $user = $env:USERNAME
+    $user     = $env:USERNAME
     $hostname = hostname
+
     $git_info = $(__update_ps1_git);
 
     $smile_face = if ($last_cmd_sucessfull) { ":)" }else { ":(" }
@@ -418,25 +418,17 @@ function yt() {
 
 ## -----------------------------------------------------------------------------
 function touch_all_files() {
-    # Set the path to the folder whose files' dates you want to update
-    $folderPath = $PWD.Path;
+    $folder_path     = $PWD.Path;
+    $files           = Get-ChildItem -Path $folder_path  -Recurse -File;
+    $currentDateTime = Get-Date;
 
-    # Get all files in the folder and its subfolders recursively
-    $files = Get-ChildItem -Path $folderPath -Recurse -File
-
-    # Get the current date and time
-    $currentDateTime = Get-Date
-
-    # Loop through each file and update its creation date, modified date, and access date
     foreach ($file in $files) {
-        # Update creation date
-        $file.CreationTime = $currentDateTime
-        # Update modified date
-        $file.LastWriteTime = $currentDateTime
-        # Update access date
+        echo "Updating $file";
+
+        $file.CreationTime   = $currentDateTime
+        $file.LastWriteTime  = $currentDateTime
         $file.LastAccessTime = $currentDateTime
     }
 
     Write-Host "All files' dates have been updated to the current time."
-
 }

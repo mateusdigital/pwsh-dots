@@ -1,17 +1,16 @@
 ## Application Stuff.
-.bash_history
 .android/
-
-
-.ssh/
-.vscode/
+.bash_history
 .bin/
 .cache/
-.dotnet/
-.nuget/
 .config/git/
+.dotnet/
 .gradle/
 .lesshst
+.nuget/
+.ssh/
+.vscode/
+
 
 ## Windows Folders
 AppData/

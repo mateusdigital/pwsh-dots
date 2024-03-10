@@ -14,6 +14,7 @@
     curr-branch   = rev-parse --abbrev-ref HEAD;
     change-branch = "!f() { git-change-branch.sh  \"$@\"; }; f";
     merge-branch  = "!f() { git-merge.sh          \"$@\"; }; f";
+    new-branch    = checkout -b;
     create-branch = checkout -b;
 
     ## Deprecated....

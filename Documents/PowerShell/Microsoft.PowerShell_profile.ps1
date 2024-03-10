@@ -281,7 +281,7 @@ function git-bash() {
 
 
 ##
-## Git Configuration
+## Git
 ##
 
 ##------------------------------------------------------------------------------
@@ -311,6 +311,29 @@ function ds() { dots s };
 function dp() { dots p };
 function dg() { dots gui };
 
+
+## -----------------------------------------------------------------------------
+function download-my-git-repos() {
+    $user_name = "mateusdigital";
+    $api_url   = "https://api.github.com/users/$user_name/repos"
+
+    $projects_dir = "$HOME/Projects/$user_name";
+
+    $response   = Invoke-RestMethod -Uri $api_url
+    $repo_names = $response | ForEach-Object { $_.name }
+
+    # Output the repository names
+    foreach($name in $repo_names) {
+        $target_dir = "$projects_dir/$name";
+        if(Test-Path "$target_dir") {
+            echo "($name) is already clonned...";
+            continue;
+        }
+
+        echo "Downloading: ($name) to ${projects_dir}";
+        git clone "git@github.com:mateusdigital/$name" "$target_dir";
+    }
+}
 
 ##
 ## Prompt
@@ -404,7 +427,7 @@ function prompt() {
 
 
 ##
-##
+## Youtube-dl
 ##
 ## -----------------------------------------------------------------------------
 function yt() {
@@ -413,7 +436,7 @@ function yt() {
 
 
 ##
-##
+## Other things
 ##
 
 ## -----------------------------------------------------------------------------

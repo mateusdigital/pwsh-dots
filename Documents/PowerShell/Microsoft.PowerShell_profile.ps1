@@ -71,10 +71,10 @@ function make-all-profiles-source-pwsh() {
     New-Item -Type Directory -Path "$windows_dirname" 2>$null;
     New-Item -Type Directory -Path "$vscode_dirname"  2>$null;
 
-    echo "if(Test-Path '$pwsh') { . '$pwsh'; }" | Out-File -FilePath "$windows";
-    echo "if(Test-Path '$pwsh') { . '$pwsh'; }" | Out-File -FilePath "$vscode";
+    Write-Output "if(Test-Path '$pwsh') { . '$pwsh'; }" | Out-File -FilePath "$windows";
+    Write-Output "if(Test-Path '$pwsh') { . '$pwsh'; }" | Out-File -FilePath "$vscode";
 
-    echo "Done...";
+    Write-Output "Done...";
 }
 
 ##------------------------------------------------------------------------------
@@ -196,7 +196,7 @@ function files() {
 ##------------------------------------------------------------------------------
 function show-wifi-password() {
     if (-not $IsWindows) {
-        echo "Not implemented for non-windows";
+        Write-Output "Not implemented for non-windows";
         return;
     }
 
@@ -221,6 +221,9 @@ function _get_default_PATH() {
 ##------------------------------------------------------------------------------
 function _configure_PATH() {
     $paths = @(
+        "C:\Program Files\nodejs",
+        "$env:AppData/Python/Python311/Scripts",
+        "$env:AppData/npm",
         "${DOTS_BIN_DIR}",
         "${DOTS_BIN_DIR}/dots",
         "${DOTS_BIN_DIR}/dots/win32",
@@ -236,9 +239,9 @@ function _configure_PATH() {
 
 ##------------------------------------------------------------------------------
 function path-list() {
-    echo "Current PATH: "
+    Write-Output "Current PATH: "
     foreach ($item in ${env:PATH}.Split(";")) {
-        echo "  $item";
+        Write-Output "  $item";
     }
 }
 
@@ -258,7 +261,7 @@ function dots-version() {
     $PROGRAM_VERSION = "4.0.0";
     $PROGRAM_AUTHOR = "mateus.digital - <hello@mateus.digital>";
     $PROGRAM_COPYRIGHT_OWNER = "mateus.digital";
-    $PROGRAM_COPYRIGHT_YEARS = "2021 - 2023";
+    $PROGRAM_COPYRIGHT_YEARS = "2021 - 2024";
     $PROGRAM_DATE = "30 Nov, 2021";
     $PROGRAM_LICENSE = "GPLv3";
 
@@ -326,11 +329,11 @@ function download-my-git-repos() {
     foreach($name in $repo_names) {
         $target_dir = "$projects_dir/$name";
         if(Test-Path "$target_dir") {
-            echo "($name) is already clonned...";
+            Write-Output "($name) is already clonned...";
             continue;
         }
 
-        echo "Downloading: ($name) to ${projects_dir}";
+        Write-Output "Downloading: ($name) to ${projects_dir}";
         git clone "git@github.com:mateusdigital/$name" "$target_dir";
     }
 }
@@ -389,8 +392,8 @@ function __update_ps1_git {
 
 
 ##------------------------------------------------------------------------------
-$_PS1_IP_ADDRESS = $(__update_ps1_ip_address);
-$_PS1_OS_ICON = $(__update_ps1_icon);
+$_PS1_IP_ADDRESS   = $(__update_ps1_ip_address);
+$_PS1_OS_ICON      = $(__update_ps1_icon);
 $_PS1_IS_USING_SSH = $(__update_ps1_ssh);
 
 ##------------------------------------------------------------------------------
@@ -446,7 +449,7 @@ function touch_all_files() {
     $currentDateTime = Get-Date;
 
     foreach ($file in $files) {
-        echo "Updating $file";
+        Write-Output "Updating $file";
 
         $file.CreationTime   = $currentDateTime
         $file.LastWriteTime  = $currentDateTime
@@ -455,3 +458,6 @@ function touch_all_files() {
 
     Write-Host "All files' dates have been updated to the current time."
 }
+
+## -----------------------------------------------------------------------------
+Import-VisualStudioEnvironment

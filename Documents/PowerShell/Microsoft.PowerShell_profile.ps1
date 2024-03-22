@@ -343,6 +343,30 @@ function download-my-git-repos() {
 ##
 
 ##------------------------------------------------------------------------------
+$__sha256  = [System.Security.Cryptography.SHA256]::Create();
+
+function __rgb_from_text {
+    param(
+        [string]$text
+    )
+
+    $bytes_to_hash = [System.Text.Encoding]::UTF8.GetBytes($text)
+    $hash_bytes    = $__sha256.ComputeHash($bytes_to_hash);
+
+    $r =  $hash_bytes[0];
+    $g =  $hash_bytes[1];
+    $b =  $hash_bytes[2];
+
+
+    if($r -lt 80) { $r += (100 - $r) * 2; }
+    if($g -lt 80) { $g += (100 - $g) * 2; }
+    if($b -lt 80) { $b += (100 - $b) * 2; }
+
+    # return "`e[38;2;${r};${g};${b}m${r};${g};${b}-${e}- ${text}`e[0m";
+    return "`e[38;2;${r};${g};${b}m${text}`e[0m";
+}
+
+
 function __update_ps1_ip_address {
     $ip = (Get-NetIPAddress | Where-Object { $_.AddressFamily -eq "IPv4" -and $_.AddressState -eq "Preferred" } | Select-Object -First 1).IPAddress
     return "$ip";
@@ -424,7 +448,8 @@ function _update_prompt() {
 }
 
 function prompt() {
-    Write-Host "$(_update_prompt)" -NoNewline;
+    $_colored = (__rgb_from_text $(_update_prompt));
+    Write-Host "${_colored}" -NoNewline;
     return " ";
 }
 

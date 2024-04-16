@@ -39,8 +39,8 @@ $env:VISUAL = "code";
 ##
 
 ##------------------------------------------------------------------------------
-$DOTS_BIN_DIR    = "${HOME}/.bin"; ## The location of our custom binaries - It'll be 1st on PATH.
-$DOTS_CONFIG_DIR = "${HOME}/.config"; ## General configuration site.
+$DOTS_BIN_DIR    = "${HOME}/.bin";        ## The location of our custom binaries - It'll be 1st on PATH.
+$DOTS_CONFIG_DIR = "${HOME}/.config";     ## General configuration site.
 $DOTS_PS_DIR     = "${HOME}/.powershell"; ## Powershell scripts site.
 
 $DOTS_TEMP_DIR = if ($IsWindows) {
@@ -78,18 +78,20 @@ function make-all-profiles-source-pwsh() {
 }
 
 ##------------------------------------------------------------------------------
-function edit-profile() {
+function edit-profile()
+{
     if($args.Count -eq 0) {
-        code "$PROFILE";
+        & $env:VISUAL "$PROFILE";
     } else {
-        code $args;
+        & $env:VISUAL $args;
     }
 }
 
-function edit-master-profile() {
-    code "$DOTS_PROFILE";
+## -----------------------------------------------------------------------------
+function edit-master-profile()
+{
+    & $env:VISUAL "$DOTS_PROFILE" "$DOTS_BIN_DIR" "$DOTS_CONFIG_DIR" "$DOTS_PS_DIR";
 }
-
 
 ##
 ## Aliases
@@ -221,15 +223,16 @@ function _get_default_PATH() {
 ##------------------------------------------------------------------------------
 function _configure_PATH() {
     $paths = @(
-        "C:\Program Files\nodejs",
-        "$env:AppData/Python/Python311/Scripts",
-        "$env:AppData/npm",
+        "C:/Program Files/nodejs",
+        "${env:AppData}/Python/Python311/Scripts",
+        "${env:AppData}/npm",
         "${DOTS_BIN_DIR}",
         "${DOTS_BIN_DIR}/dots",
         "${DOTS_BIN_DIR}/dots/win32",
         "${DOTS_BIN_DIR}/dots/win32/coreutils-5.3.0-bin/bin",
         "${DOTS_BIN_DIR}/dots/win32/findutils-4.2.20-2-bin/bin",
         "${DOTS_BIN_DIR}/dots/win32/ProcessExplorer",
+        "${DOTS_BIN_DIR}/dots/win32/ffmpeg/bin",
         "$HOME/.stdmatt/bin",
         "${env:PATH_DEFAULT}"
     )
@@ -297,7 +300,8 @@ function gg() { git gui $args; }
 function ggg() { & gitui.exe $args; }
 
 ##------------------------------------------------------------------------------
-function dots() {
+function dots()
+{
     $dots_dir       = "$HOME/pwsh-dots.git";
     $gitignore_path = "$HOME/.config/dots-gitignore";
 
@@ -493,8 +497,30 @@ function prompt() {
 ## Youtube-dl
 ##
 ## -----------------------------------------------------------------------------
-function yt() {
+function yt()
+{
     yt-dlp.exe $args;
+}
+
+
+## -----------------------------------------------------------------------------
+function scale-video()
+{
+    $input_filename = $args[0];
+    Write-Output "${input_filename}";
+
+    $output_filename = "$input_filename" -replace '\.mp4$', '-scaled.mp4';
+    ffmpeg -i "${input_filename}" -vf "scale=trunc(iw/4)*2:trunc(ih/4)*2" "${output_filename}";
+}
+
+## -----------------------------------------------------------------------------
+function scale-video-a-lot()
+{
+    $input_filename = $args[0];
+    Write-Output "${input_filename}";
+
+    $output_filename = "$input_filename" -replace '\.mp4$', '-scaled.mp4';
+    ffmpeg -i "${input_filename}" -vf "scale=trunc(iw/8)*2:trunc(ih/8)*2" "${output_filename}";
 }
 
 

@@ -2,7 +2,6 @@
 ## Application Stuff.
 .android/
 .bash_history
-.bin/
 .cache/
 .config/configstore/
 .config/git/
@@ -53,3 +52,5 @@ ntuser*
 pwsh-dots.git/
 .stdmatt
 .config/gosh
+.bin/_repochecker.py
+.bin/repochecker.ps1

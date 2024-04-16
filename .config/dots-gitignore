@@ -1,17 +1,22 @@
+## -----------------------------------------------------------------------------
 ## Application Stuff.
 .android/
 .bash_history
 .bin/
 .cache/
+.config/configstore/
 .config/git/
 .dotnet/
 .gradle/
 .lesshst
 .nuget/
+.openshot_qt/
 .ssh/
+.templateengine/
+.VirtualBox/
 .vscode/
 
-
+## -----------------------------------------------------------------------------
 ## Windows Folders
 AppData/
 Application Data/
@@ -43,9 +48,8 @@ source/
 NTUSER.DAT*
 ntuser*
 
-
+## -----------------------------------------------------------------------------
 ## Other things...
 pwsh-dots.git/
-.openshot_qt/
 .stdmatt
 .config/gosh

@@ -545,5 +545,29 @@ function touch_all_files() {
     Write-Host "All files' dates have been updated to the current time."
 }
 
+##
+## Vim
+##
+
+## -----------------------------------------------------------------------------
+function OnViModeChange
+{
+    if ($args[0] -eq 'Command') {
+        Write-Host -NoNewLine "`e[1 q";# Set the cursor to a blinking block.
+    } else {
+        Write-Host -NoNewLine "`e[5 q"; # Set the cursor to a blinking line.
+    }
+}
+
+
+## -----------------------------------------------------------------------------
+Set-PSReadLineOption -ViModeIndicator Script -ViModeChangeHandler $Function:OnViModeChange;
+Set-PSReadlineOption -EditMode Vi
+
+
+##
+## Visual Studio Compiler
+##
+
 ## -----------------------------------------------------------------------------
 # Import-VisualStudioEnvironment

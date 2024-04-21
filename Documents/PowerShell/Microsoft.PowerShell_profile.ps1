@@ -233,7 +233,7 @@ function _configure_PATH() {
         "${DOTS_BIN_DIR}/dots/win32/findutils-4.2.20-2-bin/bin",
         "${DOTS_BIN_DIR}/dots/win32/ProcessExplorer",
         "${DOTS_BIN_DIR}/dots/win32/ffmpeg/bin",
-        "$HOME/.stdmatt/bin",
+        "${HOME}/.stdmatt/bin",
         "${env:PATH_DEFAULT}"
     )
 
@@ -260,13 +260,13 @@ $env:PATH         = (_configure_PATH);
 
 ##------------------------------------------------------------------------------
 function dots-version() {
-    $PROGRAM_NAME = "dots";
-    $PROGRAM_VERSION = "4.0.0";
-    $PROGRAM_AUTHOR = "mateus.digital - <hello@mateus.digital>";
+    $PROGRAM_NAME            = "dots";
+    $PROGRAM_VERSION         = "4.0.0";
+    $PROGRAM_AUTHOR          = "mateus.digital - <hello@mateus.digital>";
     $PROGRAM_COPYRIGHT_OWNER = "mateus.digital";
     $PROGRAM_COPYRIGHT_YEARS = "2021 - 2024";
-    $PROGRAM_DATE = "30 Nov, 2021";
-    $PROGRAM_LICENSE = "GPLv3";
+    $PROGRAM_DATE            = "30 Nov, 2021";
+    $PROGRAM_LICENSE         = "GPLv3";
 
     sh_join_string "`n" `
         "${PROGRAM_NAME} - ${PROGRAM_VERSION} - ${PROGRAM_AUTHOR}",
@@ -276,19 +276,16 @@ function dots-version() {
 }
 
 
-###-----------------------------------------------------------------------
-#$env:Path += ";C:/MinGW/msys/1.0/bin"; ## posix tools...
-
-
-## Call git bash easily!
-function git-bash() {
-    & "C:/Program Files/Git/bin/bash.exe" -i -l
-}
-
-
 ##
 ## Git
 ##
+
+## -----------------------------------------------------------------------------
+## Call git bash easily!
+function git-bash()
+{
+    & "C:/Program Files/Git/bin/bash.exe" -i -l
+}
 
 ##------------------------------------------------------------------------------
 function g()  { git        $args; }
@@ -298,6 +295,7 @@ function gl() { git log    $args; }
 
 function gg() { git gui $args; }
 function ggg() { & gitui.exe $args; }
+
 
 ##------------------------------------------------------------------------------
 function dots()
@@ -309,7 +307,6 @@ function dots()
         --git-dir="$dots_dir"                  `
         --work-tree="$HOME"                    `
           $args;
-
 }
 
 
@@ -319,7 +316,8 @@ function dp() { dots p };
 function dg() { dots gui };
 
 ## -----------------------------------------------------------------------------
-function download-my-git-repos() {
+function download-my-git-repos()
+{
     $user_name = "mateusdigital";
     $api_url   = "https://api.github.com/users/mateusdigital/repos?per_page=100"
 
@@ -368,6 +366,11 @@ function download-my-git-repos() {
     }
 }
 
+## -----------------------------------------------------------------------------
+function repochecker-all()
+{
+    repochecker.ps1 --remote --submodules --show-all --short;
+}
 
 ## -----------------------------------------------------------------------------
 function clean-temp-repos()
@@ -377,6 +380,7 @@ function clean-temp-repos()
     New-Item -ItemType Directory -Path "$temp_dir";
 }
 
+
 ##
 ## Prompt
 ##
@@ -384,7 +388,8 @@ function clean-temp-repos()
 ##------------------------------------------------------------------------------
 $__sha256  = [System.Security.Cryptography.SHA256]::Create();
 
-function __rgb_from_text {
+function __rgb_from_text()
+{
     param(
         [string]$text
     )
@@ -496,12 +501,17 @@ function prompt() {
 ##
 ## Youtube-dl
 ##
+
 ## -----------------------------------------------------------------------------
 function yt()
 {
     yt-dlp.exe $args;
 }
 
+
+##
+## Videos
+##
 
 ## -----------------------------------------------------------------------------
 function scale-video()
@@ -537,13 +547,14 @@ function touch_all_files() {
     foreach ($file in $files) {
         Write-Output "Updating $file";
 
-        $file.CreationTime   = $currentDateTime
-        $file.LastWriteTime  = $currentDateTime
-        $file.LastAccessTime = $currentDateTime
+        $file.CreationTime   = $currentDateTime;
+        $file.LastWriteTime  = $currentDateTime;
+        $file.LastAccessTime = $currentDateTime;
     }
 
     Write-Host "All files' dates have been updated to the current time."
 }
+
 
 ##
 ## Vim

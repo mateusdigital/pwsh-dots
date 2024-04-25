@@ -241,30 +241,55 @@ function _get_default_PATH() {
 }
 
 ##------------------------------------------------------------------------------
-function _configure_PATH() {
-    $paths = @(
-        "C:/Program Files/nodejs",
-        "${env:AppData}/Python/Python311/Scripts",
-        "${env:AppData}/npm",
-        "${DOTS_BIN_DIR}",
-        "${DOTS_BIN_DIR}/dots",
-        "${DOTS_BIN_DIR}/dots/win32",
-        "${DOTS_BIN_DIR}/dots/win32/coreutils-5.3.0-bin/bin",
-        "${DOTS_BIN_DIR}/dots/win32/findutils-4.2.20-2-bin/bin",
-        "${DOTS_BIN_DIR}/dots/win32/ProcessExplorer",
-        ## "${DOTS_BIN_DIR}/dots/win32/ffmpeg/bin", ## Use the winget version...
-        "${DOTS_BIN_DIR}/dots/win32/vifm-w64-se-0.13-binary",
-        "${HOME}/.stdmatt/bin",
-        "${env:PATH_DEFAULT}"
-    )
+function _configure_PATH()
+{
+    ##
+    if($IsWindows) {
+        $paths = @(
+            "C:/Program Files/nodejs",
+            "${env:AppData}/Python/Python311/Scripts",
+            "${env:AppData}/npm",
+            "${DOTS_BIN_DIR}",
+            "${DOTS_BIN_DIR}/dots",
+            "${DOTS_BIN_DIR}/dots/win32",
+            "${DOTS_BIN_DIR}/dots/win32/coreutils-5.3.0-bin/bin",
+            "${DOTS_BIN_DIR}/dots/win32/findutils-4.2.20-2-bin/bin",
+            "${DOTS_BIN_DIR}/dots/win32/ProcessExplorer",
+            ## "${DOTS_BIN_DIR}/dots/win32/ffmpeg/bin", ## Use the winget version...
+            "${DOTS_BIN_DIR}/dots/win32/vifm-w64-se-0.13-binary",
+            "${HOME}/.stdmatt/bin",
+            "${env:PATH_DEFAULT}"
+        )
+    }
+    elseif($IsLinux) {
+        $paths = @(
+            "${DOTS_BIN_DIR}",
+            "${DOTS_BIN_DIR}/dots",
+            "${HOME}/.stdmatt/bin",
+            "${env:PATH_DEFAULT}"
+        )
+    }
 
-    return $paths -join ';'
+    ##
+    $path_separator_char = ":";
+    if($isWindows) {
+        $path_separator_char = ";";
+    }
+
+    return $paths -join $path_separator_char
 }
 
 ##------------------------------------------------------------------------------
-function path-list() {
+function path-list()
+{
     Write-Output "Current PATH: "
-    foreach ($item in ${env:PATH}.Split(";")) {
+
+    $path_separator_char = ":";
+    if($isWindows) {
+        $path_separator_char = ";";
+    }
+
+    foreach ($item in ${env:PATH}.Split($path_separator_char)) {
         Write-Output "  $item";
     }
 }

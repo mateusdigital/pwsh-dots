@@ -42,7 +42,7 @@
 
     ## Info
     ##--------------------------------------------------------------------------
-    list-alias    = "!f() { git-aliases.sh;}; f";
+    list-alias    = "!f() { git-aliases.sh; }; f";
     list-alia    = list-alias;
     list-aliases = list-alias;
 

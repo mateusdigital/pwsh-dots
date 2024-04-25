@@ -16,6 +16,17 @@
 .vscode/
 
 ## -----------------------------------------------------------------------------
+## Linux Things
+##.local/
+
+.bash_logout
+.motd_shown
+.sudo_as_admin_successful
+.viminfo
+.wget-hsts
+snap/
+
+## -----------------------------------------------------------------------------
 ## Windows Folders
 AppData/
 Application Data/

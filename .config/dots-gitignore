@@ -18,6 +18,7 @@
 ## -----------------------------------------------------------------------------
 ## Linux Things
 ##.local/
+.local/share/powershell/*
 
 .bash_logout
 .motd_shown

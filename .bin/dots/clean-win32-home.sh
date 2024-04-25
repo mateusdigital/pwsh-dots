@@ -1,3 +1,24 @@
+##----------------------------------------------------------------------------##
+##                               *       +                                    ##
+##                         '                  |                               ##
+##                     ()    .-.,="``"=.    - o -                             ##
+##                           '=/_       \     |                               ##
+##                        *   |  '=._    |                                    ##
+##                             \     `=./`,        '                          ##
+##                          .   '=.__.=' `='      *                           ##
+##                 +                         +                                ##
+##                      O      *        '       .                             ##
+##                                                                            ##
+##  File      : clean-win32-home.sh                                           ##
+##  Project   : dots                                                          ##
+##  Date      : 2023-11-08                                                    ##
+##  License   : See project's COPYING.TXT for full info.                      ##
+##  Author    : mateus.digital <hello@mateus.digital>                         ##
+##  Copyright : mateus.digital - 2023 - 2024                                  ##
+##                                                                            ##
+##  Description :                                                             ##
+##                                                                            ##
+##----------------------------------------------------------------------------##
 #!/usr/bin/env bash
 
 set -e; ## Stop on errors.

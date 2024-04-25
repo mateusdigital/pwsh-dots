@@ -119,8 +119,13 @@ Get-Alias | Where-Object { $_.Options -NE "Constant" } | Remove-Alias -Force;
 
 
 ##
-## Explorarion???
+## Shell
 ##
+
+##------------------------------------------------------------------------------
+function la() { ls -a  $args; }
+function ll() { ls -al $args; }
+
 
 ##------------------------------------------------------------------------------
 $global:OLDPWD = "";

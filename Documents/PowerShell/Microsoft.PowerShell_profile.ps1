@@ -124,7 +124,8 @@ Get-Alias | Where-Object { $_.Options -NE "Constant" } | Remove-Alias -Force;
 
 ##------------------------------------------------------------------------------
 $global:OLDPWD = "";
-function cd($target_path = "") {
+function cd($target_path = "")
+{
     ## cd
     ## @notice(stdmatt): This is pretty cool - It makes the cd to behave like
     ## the bash one that i can cd - and it goes to the OLDPWD.
@@ -232,7 +233,8 @@ function _configure_PATH() {
         "${DOTS_BIN_DIR}/dots/win32/coreutils-5.3.0-bin/bin",
         "${DOTS_BIN_DIR}/dots/win32/findutils-4.2.20-2-bin/bin",
         "${DOTS_BIN_DIR}/dots/win32/ProcessExplorer",
-        "${DOTS_BIN_DIR}/dots/win32/ffmpeg/bin",
+        ## "${DOTS_BIN_DIR}/dots/win32/ffmpeg/bin", ## Use the winget version...
+        "${DOTS_BIN_DIR}/dots/win32/vifm-w64-se-0.13-binary",
         "${HOME}/.stdmatt/bin",
         "${env:PATH_DEFAULT}"
     )
@@ -559,6 +561,26 @@ function touch_all_files() {
 ##
 ## Vim
 ##
+
+function v()
+{
+    if($args.Count -eq 0) {
+        nvim.exe $PWD;
+        return;
+    }
+
+    nvim.exe $args;
+}
+
+function vf()
+{
+    if($args.Count -eq 0) {
+        vifm.exe $PWD;
+        return;
+    }
+
+    vifm.exe $args;
+}
 
 ## -----------------------------------------------------------------------------
 function OnViModeChange

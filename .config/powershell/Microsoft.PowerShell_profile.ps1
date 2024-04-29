@@ -569,6 +569,11 @@ function yt()
     yt-dlp.exe $args;
 }
 
+## -----------------------------------------------------------------------------
+function yt-mp3()
+{
+    yt-dlp.exe --extract-audio $args
+}
 
 ##
 ## Videos

@@ -139,7 +139,7 @@ Get-Alias | Where-Object { $_.Options -NE "Constant" } | Remove-Alias -Force;
 ##------------------------------------------------------------------------------
 function la() { ls -a  $args; }
 function ll() { ls -al $args; }
-
+function rd() { Remove-Item -Recurse -Force $args; }
 
 ##------------------------------------------------------------------------------
 $global:OLDPWD = "";
@@ -209,7 +209,13 @@ function files() {
     return;
 }
 
-
+## -----------------------------------------------------------------------------
+function open-divas()
+{
+    gosh divas;
+    code divas-server;
+    code divas-client;
+}
 
 ##
 ## Network

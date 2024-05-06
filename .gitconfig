@@ -83,14 +83,18 @@
     ## Single Letter
     ##--------------------------------------------------------------------------
     a = list-alias;
-    b = create-branch
-    cb= change-branch;
+    b = branch;
     d = diff;
     g = "!f() { gitui "$@";    }; f"; l = log --pretty=oneline -n 10 --graph --abbrev-commit
     m = "!f() { git-merge.sh;  }; f";
     p = "!git push --set-upstream origin $(git branch-name);";
     s = status -s;
     t = tree;
+
+    ## Double Letters
+    ## --------------------------------------------------------------------------
+    nb = create-branch
+    cb = change-branch;
 
     ## Status
     ##--------------------------------------------------------------------------

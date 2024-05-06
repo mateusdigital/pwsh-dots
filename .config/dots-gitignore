@@ -14,6 +14,11 @@
 .templateengine/
 .VirtualBox/
 .vscode/
+.config/simple-update-notifier/
+.rest-client/
+.th-client/
+.vifm/*
+
 
 ## -----------------------------------------------------------------------------
 ## Linux Things

@@ -345,6 +345,9 @@ function gp() { git push   $args; }
 function gs() { git status $args; }
 function gl() { git log    $args; }
 
+function gmb() { git merge-branch; }
+function gcb() { git create-branch $args; }
+
 function gg() { git gui $args; }
 function ggg() { & gitui.exe $args; }
 

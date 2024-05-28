@@ -586,9 +586,43 @@ function prompt() {
 }
 
 
+
 ##
-## Youtube-dl
+## Audio / Video Utils
 ##
+
+## -----------------------------------------------------------------------------
+function select-audio()
+{
+    $ignore_list  = @("DELL S3422DWG");
+    $devices_list = (Get-AudioDevice -List);
+
+    $selected_device_name = $devices_list | ForEach-Object {
+        if($_.Type -eq "Playback") {
+            $device_name = $_.Name;
+            foreach($ignore_item in $ignore_list) {
+                if ($device_name -like "*$ignore_item*") {
+                    return;
+                }
+            }
+            Write-Output $device_name;
+        }
+    } | peco;
+
+    if($selected_device_name.Length -ne 0) {
+        $device_id = $null;
+        $null = $devices_list | ForEach-Object {
+            $device_name = $_.Name;
+            if($device_name -eq $selected_device_name) {
+                $device_id = $_.ID
+                return;
+            }
+        }
+
+        $null = Set-AudioDevice -ID "$device_id";
+        Write-Output "Setting device: $selected_device_name";
+    }
+}
 
 ## -----------------------------------------------------------------------------
 function yt()
@@ -601,10 +635,6 @@ function yt-mp3()
 {
     yt-dlp.exe --extract-audio $args
 }
-
-##
-## Videos
-##
 
 ## -----------------------------------------------------------------------------
 function scale-video()

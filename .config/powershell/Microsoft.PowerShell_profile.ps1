@@ -209,14 +209,6 @@ function files() {
     return;
 }
 
-## -----------------------------------------------------------------------------
-function open-divas()
-{
-    gosh divas;
-    code divas-server;
-    code divas-client;
-}
-
 ##
 ## Network
 ##

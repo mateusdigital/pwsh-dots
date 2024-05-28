@@ -341,6 +341,7 @@ function git-bash()
 
 ##------------------------------------------------------------------------------
 function g()  { git        $args; }
+function gb() { git branch $args; }
 function gp() { git push   $args; }
 function gs() { git status $args; }
 function gl() { git log    $args; }
@@ -348,8 +349,25 @@ function gl() { git log    $args; }
 function gmb() { git merge-branch; }
 function gcb() { git create-branch $args; }
 
+function gpull() { git pull $args; }
+
+
 function gg() { git gui $args; }
 function ggg() { & gitui.exe $args; }
+
+function gtk() { gitk --all; }
+
+function add-gitignore()
+{
+    $response = Invoke-RestMethod -Uri "https://www.toptal.com/developers/gitignore/api/list";
+    $picked   = $response.Split(",") | peco;
+    if(-not $picked -or $picked.Length -eq 0) {
+        return;
+    }
+
+    $response = Invoke-RestMethod -Uri "https://www.toptal.com/developers/gitignore/api/${picked}";
+    Write-Output $response | Out-File -Append .gitignore;
+}
 
 
 ##------------------------------------------------------------------------------

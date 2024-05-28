@@ -130,7 +130,7 @@ function edit-master-profile()
 ##
 
 Get-Alias | Where-Object { $_.Options -NE "Constant" } | Remove-Alias -Force;
-
+Get-Alias | Remove-Alias -Force;
 
 ##
 ## Shell

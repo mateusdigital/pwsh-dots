@@ -278,8 +278,9 @@ function _configure_PATH()
       "${DOTS_BIN_DIR}/dots/win32/findutils-4.2.20-2-bin/bin",
       "${DOTS_BIN_DIR}/dots/win32/ProcessExplorer",
       ## "${DOTS_BIN_DIR}/dots/win32/ffmpeg/bin", ## Use the winget version...
-      "${DOTS_BIN_DIR}/dots/win32/vifm-w64-se-0.13-binary",
+      "${DOTS_BIN_DIR}/dots/win32/vifm-w64-se-0.13-binary", ## VIFM
       "${HOME}/.stdmatt/bin",
+      "${HOME}/scoop/shims",
       "${env:PATH_DEFAULT}"
     )
   }

@@ -23,6 +23,10 @@
 ## -----------------------------------------------------------------------------
 $SCOOP_PATH = "${HOME}/scoop"
 
+if(-not $IsWindows) {
+  Write-Error "Scoop is just for windows - Ignoring...";
+  return;
+}
 
 ## -----------------------------------------------------------------------------
 if(-not (Test-Path "$SCOOP_PATH")) {

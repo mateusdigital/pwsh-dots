@@ -362,24 +362,27 @@ function git-bash()
 
 ##------------------------------------------------------------------------------
 function g()  { git        $args; }
-function gb() { git branch $args; }
-function gp() { git push   $args; }
 function gs() { git status $args; }
 function gl() { git log    $args; }
 
-function gc() { git change-branch $args;  }
+## -----------------------------------------------------------------------------
+function gc() { git commit -m $args;  }
 
+## -----------------------------------------------------------------------------
+function gb() { git branch $args; }
 function gmb() { git merge-branch; }
 function gcb() { git create-branch $args; }
 
+## -----------------------------------------------------------------------------
+function gp()    { git push   $args; }
 function gpull() { git pull $args; }
 
-
+## -----------------------------------------------------------------------------
 function gg() { git gui $args; }
 function ggg() { & gitui.exe $args; }
-
 function gtk() { gitk --all; }
 
+## -----------------------------------------------------------------------------
 function add-gitignore()
 {
   $response = Invoke-RestMethod -Uri "https://www.toptal.com/developers/gitignore/api/list";

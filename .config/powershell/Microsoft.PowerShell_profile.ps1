@@ -210,6 +210,16 @@ function files()
   return;
 }
 
+##------------------------------------------------------------------------------
+function gcd()
+{
+  $result = (gosh -l | peco --query $args);
+  if($result.Length -ne 0) {
+    gosh "$result";
+  }
+}
+
+
 ##
 ## Network
 ##

@@ -20,6 +20,10 @@
 .vifm/*
 npm-cache/
 scoop/
+.cisco/
+.l7tech/
+.librarymanager/
+IntelGraphicsProfiles/
 
 ## -----------------------------------------------------------------------------
 ## Linux Things
@@ -68,6 +72,9 @@ ntuser*
 ## -----------------------------------------------------------------------------
 ## Other things...
 pwsh-dots.git/
+pwsh-dots-bootstrap-backup/
+pwsh-dots/
+
 .stdmatt
 .config/gosh
 .bin/_repochecker.py

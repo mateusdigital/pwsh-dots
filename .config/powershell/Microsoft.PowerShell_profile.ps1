@@ -213,7 +213,12 @@ function files()
 ##------------------------------------------------------------------------------
 function gcd()
 {
-  $result = (gosh -l | peco --query $args);
+  if($args.Length -eq 0) {
+    $result = (gosh -l | peco);
+  } else {
+    $result = (gosh -l | peco --query $args);
+  }
+
   if($result.Length -ne 0) {
     gosh "$result";
   }

@@ -135,6 +135,9 @@
 [credential]
     helper = cache --timeout=86400
 
+[credential "https://azuredevops.pine.com"]
+	provider = generic
+
 [diff]
     renames = copies
 

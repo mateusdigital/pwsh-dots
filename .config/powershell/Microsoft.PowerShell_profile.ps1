@@ -716,6 +716,12 @@ function touch_all_files()
 ## Vim
 ##
 
+## -----------------------------------------------------------------------------
+function neovim() { nvim.exe $args }
+function vim()    { nvim.exe $args }
+function vi()     { nvim.exe $args }
+
+## -----------------------------------------------------------------------------
 function v()
 {
   if($args.Count -eq 0) {
@@ -726,6 +732,8 @@ function v()
   nvim.exe $args;
 }
 
+
+## -----------------------------------------------------------------------------
 function vf()
 {
   if($args.Count -eq 0) {

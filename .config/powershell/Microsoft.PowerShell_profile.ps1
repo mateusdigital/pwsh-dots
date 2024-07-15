@@ -108,6 +108,7 @@ function edit-master-profile()
   & $env:VISUAL "$DOTS_BIN_DIR" "$DOTS_CONFIG_DIR" "$DOTS_PS_DIR" "${HOME}/.gitconfig";
 }
 
+
 ##
 ## Aliases
 ##
@@ -291,6 +292,7 @@ function _configure_PATH()
       "${DOTS_BIN_DIR}/dots/win32",
       "${DOTS_BIN_DIR}/dots/win32/coreutils-5.3.0-bin/bin",
       "${DOTS_BIN_DIR}/dots/win32/findutils-4.2.20-2-bin/bin",
+      "${DOTS_BIN_DIR}/dots/win32/diffutils-2.8.7-1-bin/bin",
       "${DOTS_BIN_DIR}/dots/win32/ProcessExplorer",
       ## "${DOTS_BIN_DIR}/dots/win32/ffmpeg/bin", ## Use the winget version...
       "${DOTS_BIN_DIR}/dots/win32/vifm-w64-se-0.13-binary", ## VIFM
@@ -382,19 +384,19 @@ function gs() { git status $args; }
 function gl() { git log    $args; }
 
 ## -----------------------------------------------------------------------------
-function gc() { git commit -m $args;  }
 
 ## -----------------------------------------------------------------------------
-function gb() { git branch $args; }
+function gb()  { git branch $args; }
+function gc()  { git change-branch;}
 function gmb() { git merge-branch; }
 function gcb() { git create-branch $args; }
 
 ## -----------------------------------------------------------------------------
-function gp()    { git push   $args; }
+function gp()    { git push $args; }
 function gpull() { git pull $args; }
 
 ## -----------------------------------------------------------------------------
-function gg() { git gui $args; }
+function gg()  { git gui $args; }
 function ggg() { & gitui.exe $args; }
 function gtk() { gitk --all; }
 

@@ -108,6 +108,12 @@ function edit-master-profile()
   & $env:VISUAL "$DOTS_BIN_DIR" "$DOTS_CONFIG_DIR" "$DOTS_PS_DIR" "${HOME}/.gitconfig";
 }
 
+## -----------------------------------------------------------------------------
+function edit-ignore()
+{
+  & $env:VISUAL "${DOTS_GIT_IGNORE_PATH}";
+}
+
 
 ##
 ## Aliases
@@ -413,19 +419,39 @@ function add-gitignore()
   Write-Output $response | Out-File -Append .gitignore;
 }
 
+$DOTS_GIT_IGNORE_PATH = "$HOME/.config/dots-gitignore";
 
 ##------------------------------------------------------------------------------
 function dots()
 {
-  $dots_dir       = "$HOME/pwsh-dots.git";
-  $gitignore_path = "$HOME/.config/dots-gitignore";
+  $dots_dir = "$HOME/pwsh-dots.git";
 
-  git -c core.excludesFile="$gitignore_path" `
-    --git-dir="$dots_dir"                    `
-    --work-tree="$HOME"                      `
+  git -c core.excludesFile="$DOTS_GIT_IGNORE_PATH" `
+    --git-dir="$dots_dir"                          `
+    --work-tree="$HOME"                            `
       $args;
 }
 
+## -----------------------------------------------------------------------------
+function dots-ignore()
+{
+  if($args.Length -eq 0) {
+    Write-Output "Ignoring...";
+    return;
+  }
+
+  $TEMP_FILE = "$DOTS_TEMP_DIR/temp.txt";
+  Remove-Item -Force "${TEMP_FILE}";
+
+  foreach ($arg in $args) {
+    $clean_arg = $arg -replace "\\", "/";
+    Write-Output $clean_arg | Out-File -Append "${TEMP_FILE}";
+  }
+
+  ## @Incomplete: Don't use cat...
+  cat "${DOTS_GIT_IGNORE_PATH}" | Out-File -Append "${TEMP_FILE}";
+  cat  "${TEMP_FILE}" | Out-File "${DOTS_GIT_IGNORE_PATH}";
+}
 
 ## -----------------------------------------------------------------------------
 function download-my-git-repos()
@@ -746,8 +772,17 @@ function vf()
   vifm.exe $args;
 }
 
+
+##
+## Powerline
+##
+
 ## -----------------------------------------------------------------------------
-function OnViModeChange
+Import-Module PSReadLine;
+
+
+## -----------------------------------------------------------------------------
+function _OnViModeChange
 {
   if ($args[0] -eq 'Command') {
     Write-Host -NoNewLine "`e[1 q";# Set the cursor to a blinking block.
@@ -758,9 +793,17 @@ function OnViModeChange
 
 
 ## -----------------------------------------------------------------------------
-Set-PSReadLineOption -ViModeIndicator Script -ViModeChangeHandler $Function:OnViModeChange;
+Set-PSReadLineOption -PredictionSource History
+Set-PSReadLineOption -PredictionViewStyle InlineView;
+
+Set-PSReadLineOption -ViModeIndicator Script -ViModeChangeHandler $Function:_OnViModeChange;
 Set-PSReadlineOption -EditMode Vi
 
+Set-PSReadlineOption -HistorySavePath "${HOME}/.pwsh-history.txt";
+Set-PSReadlineOption -HistorySaveStyle SaveIncrementally;
+Set-PSReadLineOption -MaximumHistoryCount 1000000
+
+Set-PSReadLineOption -PredictionSource HistoryAndPlugin;
 
 ##
 ## Visual Studio Compiler

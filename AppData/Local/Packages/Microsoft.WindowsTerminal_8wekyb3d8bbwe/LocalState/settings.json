@@ -4,6 +4,14 @@
     "actions": 
     [
         {
+            "command": 
+            {
+                "action": "sendInput",
+                "input": "\u001b[A"
+            },
+            "keys": "ctrl+p"
+        },
+        {
             "command": "unbound",
             "keys": "ctrl+c"
         },
@@ -21,6 +29,14 @@
                 "action": "copy",
                 "singleLine": false
             }
+        },
+        {
+            "command": 
+            {
+                "action": "sendInput",
+                "input": "\u001b[B"
+            },
+            "keys": "ctrl+n"
         },
         {
             "command": "paste"
@@ -42,6 +58,7 @@
     "copyFormatting": "none",
     "copyOnSelect": false,
     "defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+    "focusFollowMouse": true,
     "minimizeToNotificationArea": false,
     "newTabMenu": 
     [
@@ -58,7 +75,7 @@
         "list": 
         [
             {
-                "colorScheme": "GitHub Dark",
+                "colorScheme": "GitHub Dimmed",
                 "font": 
                 {
                     "cellHeight": "1",
@@ -68,39 +85,10 @@
                 "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
                 "hidden": false,
                 "name": "PowerShell",
-                "opacity": 77,
+                "opacity": 95,
                 "source": "Windows.Terminal.PowershellCore",
+                "startingDirectory": null,
                 "useAcrylic": true
-            },
-            {
-                "guid": "{2ece5bfe-50ed-5f3a-ab87-5cd4baafed2b}",
-                "hidden": false,
-                "name": "Git Bash",
-                "source": "Git"
-            },
-            {
-                "guid": "{16208362-94fc-5b1f-a491-5b2624d5ab56}",
-                "hidden": true,
-                "name": "Visual Studio Debug Console",
-                "source": "VSDebugConsole"
-            },
-            {
-                "guid": "{51855cb2-8cce-5362-8f54-464b92b32386}",
-                "hidden": false,
-                "name": "Ubuntu",
-                "source": "CanonicalGroupLimited.Ubuntu_79rhkp1fndgsc"
-            },
-            {
-                "guid": "{963ff2f7-6aed-5ce3-9d91-90d99571f53a}",
-                "hidden": true,
-                "name": "Ubuntu-24.04",
-                "source": "Windows.Terminal.Wsl"
-            },
-            {
-                "guid": "{acbafd15-cbbb-5bb3-8a61-bed446ff4b83}",
-                "hidden": false,
-                "name": "Ubuntu 24.04 LTS",
-                "source": "CanonicalGroupLimited.Ubuntu24.04LTS_79rhkp1fndgsc"
             }
         ]
     },
@@ -151,52 +139,6 @@
             "selectionBackground": "#FFFFFF",
             "white": "#CCCCCC",
             "yellow": "#C19C00"
-        },
-        {
-            "background": "#1E1E1E",
-            "black": "#000000",
-            "blue": "#2472C8",
-            "brightBlack": "#666666",
-            "brightBlue": "#3B8EEA",
-            "brightCyan": "#29B8DB",
-            "brightGreen": "#23D18B",
-            "brightPurple": "#D670D6",
-            "brightRed": "#F14C4C",
-            "brightWhite": "#E5E5E5",
-            "brightYellow": "#F5F543",
-            "cursorColor": "#FFFFFF",
-            "cyan": "#11A8CD",
-            "foreground": "#CCCCCC",
-            "green": "#0DBC79",
-            "name": "Dark+",
-            "purple": "#BC3FBC",
-            "red": "#CD3131",
-            "selectionBackground": "#3A3D41",
-            "white": "#E5E5E5",
-            "yellow": "#E5E510"
-        },
-        {
-            "background": "#090C10",
-            "black": "#484F58",
-            "blue": "#58A6FF",
-            "brightBlack": "#6E7681",
-            "brightBlue": "#79C0FF",
-            "brightCyan": "#56D4DD",
-            "brightGreen": "#56D364",
-            "brightPurple": "#D2A8FF",
-            "brightRed": "#FFA198",
-            "brightWhite": "#F0F6FC",
-            "brightYellow": "#E3B341",
-            "cursorColor": "#B1BAC4",
-            "cyan": "#39C5CF",
-            "foreground": "#8B949E",
-            "green": "#3FB950",
-            "name": "GitHub Dark",
-            "purple": "#BC8CFF",
-            "red": "#FF7B72",
-            "selectionBackground": "#B1BAC4",
-            "white": "#B1BAC4",
-            "yellow": "#D29922"
         },
         {
             "background": "#1E2329",
@@ -286,7 +228,7 @@
             "name": "One Half Light",
             "purple": "#A626A4",
             "red": "#E45649",
-            "selectionBackground": "#FFFFFF",
+            "selectionBackground": "#4F525D",
             "white": "#FAFAFA",
             "yellow": "#C18301"
         },
@@ -332,7 +274,7 @@
             "name": "Solarized Light",
             "purple": "#D33682",
             "red": "#DC322F",
-            "selectionBackground": "#FFFFFF",
+            "selectionBackground": "#073642",
             "white": "#EEE8D5",
             "yellow": "#B58900"
         },
@@ -378,7 +320,7 @@
             "name": "Tango Light",
             "purple": "#75507B",
             "red": "#CC0000",
-            "selectionBackground": "#FFFFFF",
+            "selectionBackground": "#555753",
             "white": "#D3D7CF",
             "yellow": "#C4A000"
         },
@@ -452,6 +394,7 @@
             "yellow": "#808000"
         }
     ],
-    "showTerminalTitleInTitlebar": false,
-    "themes": []
+    "showTerminalTitleInTitlebar": true,
+    "themes": [],
+    "useAcrylicInTabRow": true
 }

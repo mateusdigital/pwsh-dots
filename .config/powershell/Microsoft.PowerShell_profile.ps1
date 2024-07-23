@@ -119,6 +119,13 @@ function edit-master-profile()
   & $env:VISUAL "$DOTS_BIN_DIR" "$DOTS_CONFIG_DIR" "$DOTS_PS_DIR" "${HOME}/.gitconfig";
 }
 
+## -----------------------------------------------------------------------------
+function edit-ignore()
+{
+  & $env:VISUAL "${DOTS_GIT_IGNORE_PATH}";
+}
+
+
 ##
 ## Aliases
 ##
@@ -302,6 +309,7 @@ function _configure_PATH()
       "${DOTS_BIN_DIR}/dots/win32",
       "${DOTS_BIN_DIR}/dots/win32/coreutils-5.3.0-bin/bin",
       "${DOTS_BIN_DIR}/dots/win32/findutils-4.2.20-2-bin/bin",
+      "${DOTS_BIN_DIR}/dots/win32/diffutils-2.8.7-1-bin/bin",
       "${DOTS_BIN_DIR}/dots/win32/ProcessExplorer",
       ## "${DOTS_BIN_DIR}/dots/win32/ffmpeg/bin", ## Use the winget version...
       "${DOTS_BIN_DIR}/dots/win32/vifm-w64-se-0.13-binary", ## VIFM
@@ -393,19 +401,19 @@ function gs() { git status $args; }
 function gl() { git log    $args; }
 
 ## -----------------------------------------------------------------------------
-function gc() { git commit -m $args;  }
 
 ## -----------------------------------------------------------------------------
-function gb() { git branch $args; }
+function gb()  { git branch $args; }
+function gc()  { git change-branch;}
 function gmb() { git merge-branch; }
 function gcb() { git create-branch $args; }
 
 ## -----------------------------------------------------------------------------
-function gp()    { git push   $args; }
+function gp()    { git push $args; }
 function gpull() { git pull $args; }
 
 ## -----------------------------------------------------------------------------
-function gg() { git gui $args; }
+function gg()  { git gui $args; }
 function ggg() { & gitui.exe $args; }
 function gtk() { gitk --all; }
 
@@ -422,19 +430,39 @@ function add-gitignore()
   Write-Output $response | Out-File -Append .gitignore;
 }
 
+$DOTS_GIT_IGNORE_PATH = "$HOME/.config/dots-gitignore";
 
 ##------------------------------------------------------------------------------
 function dots()
 {
-  $dots_dir       = "$HOME/pwsh-dots.git";
-  $gitignore_path = "$HOME/.config/dots-gitignore";
+  $dots_dir = "$HOME/pwsh-dots.git";
 
-  git -c core.excludesFile="$gitignore_path" `
-    --git-dir="$dots_dir"                    `
-    --work-tree="$HOME"                      `
+  git -c core.excludesFile="$DOTS_GIT_IGNORE_PATH" `
+    --git-dir="$dots_dir"                          `
+    --work-tree="$HOME"                            `
       $args;
 }
 
+## -----------------------------------------------------------------------------
+function dots-ignore()
+{
+  if($args.Length -eq 0) {
+    Write-Output "Ignoring...";
+    return;
+  }
+
+  $TEMP_FILE = "$DOTS_TEMP_DIR/temp.txt";
+  Remove-Item -Force "${TEMP_FILE}";
+
+  foreach ($arg in $args) {
+    $clean_arg = $arg -replace "\\", "/";
+    Write-Output $clean_arg | Out-File -Append "${TEMP_FILE}";
+  }
+
+  ## @Incomplete: Don't use cat...
+  cat "${DOTS_GIT_IGNORE_PATH}" | Out-File -Append "${TEMP_FILE}";
+  cat  "${TEMP_FILE}" | Out-File "${DOTS_GIT_IGNORE_PATH}";
+}
 
 ## -----------------------------------------------------------------------------
 function download-my-git-repos()
@@ -727,6 +755,12 @@ function touch_all_files()
 ## Vim
 ##
 
+## -----------------------------------------------------------------------------
+function neovim() { nvim.exe $args }
+function vim()    { nvim.exe $args }
+function vi()     { nvim.exe $args }
+
+## -----------------------------------------------------------------------------
 function v()
 {
   if($args.Count -eq 0) {
@@ -737,6 +771,8 @@ function v()
   nvim.exe $args;
 }
 
+
+## -----------------------------------------------------------------------------
 function vf()
 {
   if($args.Count -eq 0) {
@@ -747,8 +783,17 @@ function vf()
   vifm.exe $args;
 }
 
+
+##
+## Powerline
+##
+
 ## -----------------------------------------------------------------------------
-function OnViModeChange
+Import-Module PSReadLine;
+
+
+## -----------------------------------------------------------------------------
+function _OnViModeChange
 {
   if ($args[0] -eq 'Command') {
     Write-Host -NoNewLine "`e[1 q";# Set the cursor to a blinking block.
@@ -759,9 +804,17 @@ function OnViModeChange
 
 
 ## -----------------------------------------------------------------------------
-Set-PSReadLineOption -ViModeIndicator Script -ViModeChangeHandler $Function:OnViModeChange;
+Set-PSReadLineOption -PredictionSource History
+Set-PSReadLineOption -PredictionViewStyle InlineView;
+
+Set-PSReadLineOption -ViModeIndicator Script -ViModeChangeHandler $Function:_OnViModeChange;
 Set-PSReadlineOption -EditMode Vi
 
+Set-PSReadlineOption -HistorySavePath "${HOME}/.pwsh-history.txt";
+Set-PSReadlineOption -HistorySaveStyle SaveIncrementally;
+Set-PSReadLineOption -MaximumHistoryCount 1000000
+
+Set-PSReadLineOption -PredictionSource HistoryAndPlugin;
 
 ##
 ## Visual Studio Compiler

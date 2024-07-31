@@ -291,6 +291,7 @@ function _configure_PATH()
   if($IsWindows) {
     $paths = @(
       "C:/Program Files/nodejs",
+      "C:/Program Files/Vim/vim91",
       "${env:AppData}/Python/Python311/Scripts",
       "${env:AppData}/npm",
       "${DOTS_BIN_DIR}",

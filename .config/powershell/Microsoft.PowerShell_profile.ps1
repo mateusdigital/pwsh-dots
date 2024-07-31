@@ -35,6 +35,17 @@ $env:EDITOR = "code";
 $env:VISUAL = "code";
 
 
+##------------------------------------------------------------------------------
+function ide()
+{
+  $result = (ls *.sln | peco);
+  if($result.Length -ne 0) {
+    Invoke-Item $result;
+  } else {
+    Write-Output "Ignoring...";
+  }
+}
+
 ##
 ## Important directories
 ##

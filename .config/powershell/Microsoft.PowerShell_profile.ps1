@@ -34,17 +34,23 @@ $env:DOTS_IS_VERSBOSE            = 0; ## We dont' want a talkative dots.
 $env:EDITOR = "code";
 $env:VISUAL = "code";
 
+##
+## Aux functions
+##
 
-##------------------------------------------------------------------------------
-function ide()
+## -----------------------------------------------------------------------------
+function _peco()
 {
-  $result = (ls *.sln | peco);
-  if($result.Length -ne 0) {
-    Invoke-Item $result;
+  $input_data = ($input | Out-String);
+
+  if($args.Length -eq 0) {
+    $result =  $input_data | peco;
   } else {
-    Write-Output "Ignoring...";
+    $result =  $input_data | peco --query $args;
   }
+  return $result;
 }
+
 
 ##
 ## Important directories
@@ -75,6 +81,7 @@ function IsWSL()
 
   return (uname -a | grep microsoft).Length -gt 0;
 }
+
 
 ##
 ## Profiles
@@ -193,6 +200,18 @@ function cd($target_path = "")
   Set-Location $target_path; ## Needs to be the Powershell builtin or infinity recursion
 }
 
+
+##------------------------------------------------------------------------------
+function ide()
+{
+  $result = (ls *.sln | _peco);
+  if($result.Length -ne 0) {
+    Invoke-Item $result;
+  } else {
+    Write-Output "Ignoring...";
+  }
+}
+
 ##------------------------------------------------------------------------------
 function f() { files $arsg; }
 
@@ -229,16 +248,39 @@ function files()
 }
 
 ##------------------------------------------------------------------------------
-function gcd()
+function go()
 {
   if($args.Length -eq 0) {
-    $result = (gosh -l | peco);
+    $result = (gosh -l | _peco);
   } else {
-    $result = (gosh -l | peco --query $args);
+    $result = (gosh -l | _peco --query $args);
   }
 
   if($result.Length -ne 0) {
     gosh "$result";
+  }
+}
+
+
+##------------------------------------------------------------------------------
+function open()
+{
+  $value = "";
+
+  if($args.Length -gt 0) {
+    $value = $args[0];
+
+    if(Test-Path "$value") {
+      Invoke-Item "$value";
+      return;
+    }
+  }
+
+  $result = (ls | _peco "$value");
+  if($result.Length -ne 0) {
+    Invoke-Item $result;
+  } else {
+    Write-Output "Ignoring...";
   }
 }
 
@@ -403,6 +445,10 @@ function gl() { git log    $args; }
 
 ## -----------------------------------------------------------------------------
 
+function gm() {
+  git commit -m "$args";
+}
+
 ## -----------------------------------------------------------------------------
 function gb()  { git branch $args; }
 function gc()  { git change-branch;}
@@ -414,15 +460,73 @@ function gp()    { git push $args; }
 function gpull() { git pull $args; }
 
 ## -----------------------------------------------------------------------------
+function greset() { git reset --hard; }
+
+
+## -----------------------------------------------------------------------------
 function gg()  { git gui $args; }
 function ggg() { & gitui.exe $args; }
 function gtk() { gitk --all; }
+
+
+function Is-RepoDirty {
+    param (
+        [string]$Path
+    )
+
+    # Navigate to the repository
+    Push-Location $Path
+
+    # Check if the repo is dirty
+    $status = git status --porcelain
+    $isDirty = -not [string]::IsNullOrEmpty($status)
+
+    # Return to the previous location
+    Pop-Location
+
+    return $isDirty
+}
+
+## -----------------------------------------------------------------------------
+function commit-work()
+{
+  $program_to_run = "gg";
+
+  $rootRepoPath = (git rev-parse --show-toplevel);
+  Write-Host "Checking submodules in repository: ($rootRepoPath)";
+
+  $submodules = git submodule --quiet foreach 'echo $sm_path';
+
+  foreach ($submodule in $submodules) {
+      $submodulePath = (Join-Path $rootRepoPath $submodule);
+      Write-Host "   Checking submodule: ($submodule)";
+
+      if (Is-RepoDirty $submodulePath) {
+          Write-Host "      Submodule $submodule is dirty. Running '${program_to_run}'...";
+          Read-Host;
+
+          Push-Location $submodulePath
+          & ${program_to_run}
+          Pop-Location
+      } else {
+          Write-Host "   Submodule ($submodule) is clean."
+      }
+  }
+
+  Write-Host "Running '${program_to_run}' in the root repository..."
+  Read-Host;
+  & ${program_to_run}
+}
+
+function ccc() {
+  commit-work $args;
+}
 
 ## -----------------------------------------------------------------------------
 function add-gitignore()
 {
   $response = Invoke-RestMethod -Uri "https://www.toptal.com/developers/gitignore/api/list";
-  $picked   = $response.Split(",") | peco;
+  $picked   = $response.Split(",") | _peco;
   if(-not $picked -or $picked.Length -eq 0) {
     return;
   }
@@ -463,6 +567,14 @@ function dots-ignore()
   ## @Incomplete: Don't use cat...
   cat "${DOTS_GIT_IGNORE_PATH}" | Out-File -Append "${TEMP_FILE}";
   cat  "${TEMP_FILE}" | Out-File "${DOTS_GIT_IGNORE_PATH}";
+}
+
+## -----------------------------------------------------------------------------
+function dots-sync()
+{
+  dots gui;
+  dots pull;
+  dots push;
 }
 
 ## -----------------------------------------------------------------------------
@@ -687,7 +799,7 @@ function select-audio()
       }
       Write-Output $device_name;
     }
-  } | peco;
+  } | _peco;
 
   if($selected_device_name.Length -ne 0) {
     $device_id = $null;

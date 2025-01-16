@@ -73,9 +73,10 @@ ntuser*
 
 ## -----------------------------------------------------------------------------
 ## Other things...
-pwsh-dots.git/
-pwsh-dots-bootstrap-backup/
-pwsh-dots/
+pwsh-dots.git
+pwsh-dots-bootstrap-backup
+pwsh-dots
+.pwsh-dots
 
 .stdmatt
 .config/gosh

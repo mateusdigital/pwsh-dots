@@ -28,7 +28,7 @@
 
 ##------------------------------------------------------------------------------
 $env:POWERSHELL_TELEMETRY_OPTOUT = 1; ## Don't track us.
-$env:DOTS_IS_VERSBOSE            = 0; ## We dont' want a talkative dots.
+$env:DOTS_IS_VERBOSE             = 0; ## We dont' want a talkative dots.
 
 ##------------------------------------------------------------------------------
 $env:EDITOR = "code";
@@ -61,6 +61,11 @@ $DOTS_BIN_DIR    = "${HOME}/.bin";                  ## The location of our custo
 $DOTS_CONFIG_DIR = "${HOME}/.config";               ## General configuration site.
 $DOTS_PS_DIR     = "${DOTS_CONFIG_DIR}/powershell"; ## Powershell scripts site.
 
+##------------------------------------------------------------------------------
+$_CORE_UTILS_DIR = "${DOTS_BIN_DIR}/dots/win32/coreutils-5.3.0-bin/bin";
+$_FIND_UTILS_DIR = "${DOTS_BIN_DIR}/dots/win32/findutils-4.2.20-2-bin/bin";
+$_DIFF_UTILS_DIR = "${DOTS_BIN_DIR}/dots/win32/diffutils-2.8.7-1-bin/bin";
+
 $DOTS_TEMP_DIR = if ($IsWindows) {
   $env:TEMP
 } else {
@@ -86,39 +91,6 @@ function IsWSL()
 ##
 ## Profiles
 ##
-
-##------------------------------------------------------------------------------
-$DOTS_PROFILE = "$HOME/Documents/PowerShell/Microsoft.PowerShell_profile.ps1";
-
-
-##------------------------------------------------------------------------------
-function make-all-profiles-source-pwsh()
-{
-  $pwsh    = "$HOME/Documents/PowerShell/Microsoft.PowerShell_profile.ps1";
-  $windows = "$HOME/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1";
-  $vscode  = "$HOME/Documents/PowerShell/Microsoft.VSCode_profile.ps1";
-
-  $windows_dirname = Split-Path -Parent -Path "$windows";
-  $vscode_dirname  = Split-Path -Parent -Path "$vscode";
-
-  New-Item -Type Directory -Path "$windows_dirname" 2>$null;
-  New-Item -Type Directory -Path "$vscode_dirname"  2>$null;
-
-  Write-Output "if(Test-Path '$pwsh') { . '$pwsh'; }" | Out-File -FilePath "$windows";
-  Write-Output "if(Test-Path '$pwsh') { . '$pwsh'; }" | Out-File -FilePath "$vscode";
-
-  Write-Output "Done...";
-}
-
-##------------------------------------------------------------------------------
-function edit-profile()
-{
-  if($args.Count -eq 0) {
-    & $env:VISUAL "$PROFILE";
-  } else {
-    & $env:VISUAL $args;
-  }
-}
 
 ## -----------------------------------------------------------------------------
 function edit-master-profile()
@@ -164,9 +136,15 @@ Get-Alias | Remove-Alias -Force;
 ##
 
 ##------------------------------------------------------------------------------
-function la() { ls -a  $args; }
-function ll() { ls -al $args; }
+## @notice(md): I decided not clutter the shell with the gnu tools, but instead
+## create functions that calls the actual program with the complete path.
+## Making this way since i have a lot of troubles with the gnu tools in
+## some edge cases that i don't want to deal with right now. - 2025-01-16
+function ls() { & "$_CORE_UTILS_DIR/ls" $args; }
+function la() { & "$_CORE_UTILS_DIR/ls" -a  $args; }
+function ll() { & "$_CORE_UTILS_DIR/ls" -al $args; }
 function rd() { Remove-Item -Recurse -Force $args; }
+
 
 ##------------------------------------------------------------------------------
 $global:OLDPWD = "";
@@ -204,7 +182,7 @@ function cd($target_path = "")
 ##------------------------------------------------------------------------------
 function ide()
 {
-  $result = (ls *.sln | _peco);
+  $result = (ls .sln | _peco);
   if($result.Length -ne 0) {
     Invoke-Item $result;
   } else {
@@ -213,7 +191,7 @@ function ide()
 }
 
 ##------------------------------------------------------------------------------
-function f() { files $arsg; }
+function f() { files $args; }
 
 function files()
 {
@@ -343,22 +321,15 @@ function _configure_PATH()
   ##
   if($IsWindows) {
     $paths = @(
+      ##
       "C:/Program Files/nodejs",
-      "C:/Program Files/Vim/vim91",
-      "${env:AppData}/Python/Python311/Scripts",
       "${env:AppData}/npm",
+      ##
       "${DOTS_BIN_DIR}",
       "${DOTS_BIN_DIR}/dots",
       "${DOTS_BIN_DIR}/dots/win32",
-      "${DOTS_BIN_DIR}/dots/win32/coreutils-5.3.0-bin/bin",
-      "${DOTS_BIN_DIR}/dots/win32/findutils-4.2.20-2-bin/bin",
-      "${DOTS_BIN_DIR}/dots/win32/diffutils-2.8.7-1-bin/bin",
       "${DOTS_BIN_DIR}/dots/win32/ProcessExplorer",
-      ## "${DOTS_BIN_DIR}/dots/win32/ffmpeg/bin", ## Use the winget version...
-      "${DOTS_BIN_DIR}/dots/win32/vifm-w64-se-0.13-binary", ## VIFM
-      "${HOME}/.stdmatt/bin",
-      "${HOME}/.mateusdigital/bin",
-      "${HOME}/scoop/shims",
+      ##
       "${env:PATH_DEFAULT}"
     )
   }
@@ -366,7 +337,6 @@ function _configure_PATH()
     $paths = @(
       "${DOTS_BIN_DIR}",
       "${DOTS_BIN_DIR}/dots",
-      "${HOME}/.stdmatt/bin",
       "${env:PATH_DEFAULT}"
     )
   }
@@ -401,42 +371,11 @@ $env:PATH_DEFAULT = (_get_default_PATH);
 $env:PATH         = (_configure_PATH);
 
 
-##
-## Version
-##
-
-##------------------------------------------------------------------------------
-function dots-version()
-{
-  $PROGRAM_NAME            = "dots";
-  $PROGRAM_VERSION         = "4.0.0";
-  $PROGRAM_AUTHOR          = "mateus.digital - <hello@mateus.digital>";
-  $PROGRAM_COPYRIGHT_OWNER = "mateus.digital";
-  $PROGRAM_COPYRIGHT_YEARS = "2021 - 2024";
-  $PROGRAM_DATE            = "30 Nov, 2021";
-  $PROGRAM_LICENSE         = "GPLv3";
-
-  $output = @(
-      "${PROGRAM_NAME} - ${PROGRAM_VERSION} - ${PROGRAM_AUTHOR}"
-      "Copyright (c) ${PROGRAM_COPYRIGHT_YEARS} - ${PROGRAM_COPYRIGHT_OWNER}"
-      "This is a free software (${PROGRAM_LICENSE}) - Share/Hack it"
-      "Check https://mateus.digital for more :)"
-  ) -join "`n";
-
-  Write-Output "$output";
-}
 
 
 ##
 ## Git
 ##
-
-## -----------------------------------------------------------------------------
-## Call git bash easily!
-function git-bash()
-{
-    & "C:/Program Files/Git/bin/bash.exe" -i -l
-}
 
 ##------------------------------------------------------------------------------
 function g()  { git        $args; }
@@ -444,19 +383,8 @@ function gs() { git status $args; }
 function gl() { git log    $args; }
 
 ## -----------------------------------------------------------------------------
-
-function gm() {
-  git commit -m "$args";
-}
-
-## -----------------------------------------------------------------------------
-function gb()  { git branch $args; }
-function gc()  { git change-branch;}
-function gmb() { git merge-branch; }
-function gcb() { git create-branch $args; }
-
-## -----------------------------------------------------------------------------
 function gp()    { git push $args; }
+function gpush() { git push $args; }
 function gpull() { git pull $args; }
 
 ## -----------------------------------------------------------------------------
@@ -465,62 +393,7 @@ function greset() { git reset --hard; }
 
 ## -----------------------------------------------------------------------------
 function gg()  { git gui $args; }
-function ggg() { & gitui.exe $args; }
 function gtk() { gitk --all; }
-
-
-function Is-RepoDirty {
-    param (
-        [string]$Path
-    )
-
-    # Navigate to the repository
-    Push-Location $Path
-
-    # Check if the repo is dirty
-    $status = git status --porcelain
-    $isDirty = -not [string]::IsNullOrEmpty($status)
-
-    # Return to the previous location
-    Pop-Location
-
-    return $isDirty
-}
-
-## -----------------------------------------------------------------------------
-function commit-work()
-{
-  $program_to_run = "gg";
-
-  $rootRepoPath = (git rev-parse --show-toplevel);
-  Write-Host "Checking submodules in repository: ($rootRepoPath)";
-
-  $submodules = git submodule --quiet foreach 'echo $sm_path';
-
-  foreach ($submodule in $submodules) {
-      $submodulePath = (Join-Path $rootRepoPath $submodule);
-      Write-Host "   Checking submodule: ($submodule)";
-
-      if (Is-RepoDirty $submodulePath) {
-          Write-Host "      Submodule $submodule is dirty. Running '${program_to_run}'...";
-          Read-Host;
-
-          Push-Location $submodulePath
-          & ${program_to_run}
-          Pop-Location
-      } else {
-          Write-Host "   Submodule ($submodule) is clean."
-      }
-  }
-
-  Write-Host "Running '${program_to_run}' in the root repository..."
-  Read-Host;
-  & ${program_to_run}
-}
-
-function ccc() {
-  commit-work $args;
-}
 
 ## -----------------------------------------------------------------------------
 function add-gitignore()
@@ -537,44 +410,21 @@ function add-gitignore()
 
 $DOTS_GIT_IGNORE_PATH = "$HOME/.config/dots-gitignore";
 
+
+
+##
+## Dots
+##
+
 ##------------------------------------------------------------------------------
 function dots()
 {
-  $dots_dir = "$HOME/pwsh-dots.git";
+  $dots_dir = "$HOME/.pwsh-dots";
 
   git -c core.excludesFile="$DOTS_GIT_IGNORE_PATH" `
     --git-dir="$dots_dir"                          `
     --work-tree="$HOME"                            `
       $args;
-}
-
-## -----------------------------------------------------------------------------
-function dots-ignore()
-{
-  if($args.Length -eq 0) {
-    Write-Output "Ignoring...";
-    return;
-  }
-
-  $TEMP_FILE = "$DOTS_TEMP_DIR/temp.txt";
-  Remove-Item -Force "${TEMP_FILE}";
-
-  foreach ($arg in $args) {
-    $clean_arg = $arg -replace "\\", "/";
-    Write-Output $clean_arg | Out-File -Append "${TEMP_FILE}";
-  }
-
-  ## @Incomplete: Don't use cat...
-  cat "${DOTS_GIT_IGNORE_PATH}" | Out-File -Append "${TEMP_FILE}";
-  cat  "${TEMP_FILE}" | Out-File "${DOTS_GIT_IGNORE_PATH}";
-}
-
-## -----------------------------------------------------------------------------
-function dots-sync()
-{
-  dots gui;
-  dots pull;
-  dots push;
 }
 
 ## -----------------------------------------------------------------------------

@@ -93,9 +93,16 @@ function IsWSL()
 ##
 
 ## -----------------------------------------------------------------------------
-function edit-master-profile()
+function edit-profile()
 {
-  & $env:VISUAL "$DOTS_BIN_DIR" "$DOTS_CONFIG_DIR" "$DOTS_PS_DIR" "${HOME}/.gitconfig";
+  & $env:VISUAL                                     `
+    "$DOTS_PS_DIR/Microsoft.PowerShell_profile.ps1" `
+    "$DOTS_BIN_DIR"                                 `
+    "${HOME}/.gitconfig"                            `
+    "${HOME}/.clang-format"                         `
+    "$DOTS_CONFIG_DIR"                              `
+    "$DOTS_PS_DIR"                                  `
+    ;
 }
 
 ## -----------------------------------------------------------------------------
@@ -140,10 +147,22 @@ Get-Alias | Remove-Alias -Force;
 ## create functions that calls the actual program with the complete path.
 ## Making this way since i have a lot of troubles with the gnu tools in
 ## some edge cases that i don't want to deal with right now. - 2025-01-16
+
+## List
 function ls() { & "$_CORE_UTILS_DIR/ls" $args; }
 function la() { & "$_CORE_UTILS_DIR/ls" -a  $args; }
 function ll() { & "$_CORE_UTILS_DIR/ls" -al $args; }
-function rd() { Remove-Item -Recurse -Force $args; }
+
+## Copy
+function cp() { & "$_CORE_UTILS_DIR/cp" $args; }
+
+
+## Move
+function mv() { & "$_CORE_UTILS_DIR/mv" $args; }
+
+## Remove
+function rm() { Remove-Item  $args; } ## Remove file
+function rd() { Remove-Item -Recurse -Force $args; } ## Remove Directory...
 
 
 ##------------------------------------------------------------------------------
@@ -321,15 +340,17 @@ function _configure_PATH()
   ##
   if($IsWindows) {
     $paths = @(
-      ##
+      ## Program
       "C:/Program Files/nodejs",
       "${env:AppData}/npm",
-      ##
+      ## Dots
       "${DOTS_BIN_DIR}",
       "${DOTS_BIN_DIR}/dots",
       "${DOTS_BIN_DIR}/dots/win32",
       "${DOTS_BIN_DIR}/dots/win32/ProcessExplorer",
-      ##
+      ## mateusdigital
+      "${HOME}/.mateusdigital/bin",
+      ## Rest
       "${env:PATH_DEFAULT}"
     )
   }
@@ -408,13 +429,25 @@ function add-gitignore()
   Write-Output $response | Out-File -Append .gitignore;
 }
 
-$DOTS_GIT_IGNORE_PATH = "$HOME/.config/dots-gitignore";
 
 
+##
+## clang-format
+##
+
+##------------------------------------------------------------------------------
+function copy-clang-format()
+{
+  Copy-Item "${HOME}/.clang-format" "${PWD}/.clang-format";
+}
 
 ##
 ## Dots
 ##
+
+##------------------------------------------------------------------------------
+$DOTS_GIT_IGNORE_PATH = "$HOME/.config/dots-gitignore";
+
 
 ##------------------------------------------------------------------------------
 function dots()

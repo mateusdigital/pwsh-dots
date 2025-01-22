@@ -5,27 +5,34 @@
 .android/
 .bash_history
 .cache/
+.cisco/
 .config/configstore/
 .config/git/
+.config/simple-update-notifier/
 .dotnet/
+.git-for-windows-updater
+.gk/
+.gnupg/
 .gradle/
+.l7tech/
 .lesshst
+.librarymanager/
+.minikube/
 .nuget/
 .openshot_qt/
-.ssh/
-.templateengine/
-.VirtualBox/
-.vscode/
-.config/simple-update-notifier/
 .rest-client/
+.ssh/
+.swt/
+.templateengine/
 .th-client/
 .vifm/*
+.VirtualBox/
+.vs-kubernetes/
+.vscode/
 npm-cache/
 scoop/
-.cisco/
-.l7tech/
-.librarymanager/
 IntelGraphicsProfiles/
+java_error_in_studio.hprof
 
 ## -----------------------------------------------------------------------------
 ## Linux Things

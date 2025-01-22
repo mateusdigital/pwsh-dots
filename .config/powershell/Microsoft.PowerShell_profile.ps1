@@ -41,14 +41,7 @@ $env:VISUAL = "code";
 ## -----------------------------------------------------------------------------
 function _peco()
 {
-  $input_data = ($input | Out-String);
-
-  if($args.Length -eq 0) {
-    $result =  $input_data | peco;
-  } else {
-    $result =  $input_data | peco --query $args;
-  }
-  return $result;
+  peco $args;
 }
 
 
@@ -156,6 +149,10 @@ function ll() { & "$_CORE_UTILS_DIR/ls" -al $args; }
 ## Copy
 function cp() { & "$_CORE_UTILS_DIR/cp" $args; }
 
+## Json
+function jd() {
+ "$(Get-Clipboard)" | jq
+}
 
 ## Move
 function mv() { & "$_CORE_UTILS_DIR/mv" $args; }
@@ -279,6 +276,16 @@ function open()
   } else {
     Write-Output "Ignoring...";
   }
+}
+
+
+##
+## NPM
+##
+
+##------------------------------------------------------------------------------
+function npm-list-deps() {
+  npm list --depth=0 --json | jq -r '.dependencies | keys[]'
 }
 
 
@@ -415,6 +422,56 @@ function greset() { git reset --hard; }
 ## -----------------------------------------------------------------------------
 function gg()  { git gui $args; }
 function gtk() { gitk --all; }
+
+## -----------------------------------------------------------------------------
+function git-branch-new() {
+  if($args.Length -eq 0) {
+    Write-Host "[FATAL] No branch name was given." -ForegroundColor Red;
+    return;
+  }
+
+  $clean_name = ($args -join "-");
+  Write-Output "Creating branch: ($clean_name)";
+
+  git checkout -b "$clean_name";
+}
+
+function gbn() { git-branch-new $args; }
+
+
+## -----------------------------------------------------------------------------
+function git-branch-checkout() {
+  $branch_name = "";
+  if($args.Length -eq 0) {
+    $branch_name = $args[0];
+  }
+
+  $all_branches = (git branch --all --list);
+  $clean_branches = "";
+
+  for($i = 0; $i -lt $all_branches.Length; $i++) {
+    $clean_name = $all_branches[$i];
+    $clean_name = $clean_name.Replace("*", "").Trim().Replace("remotes/origin/", "");
+
+    if($clean_name.Contains("HEAD")) {
+      continue;
+    }
+
+    $clean_branches += "$clean_name ";
+  }
+
+  $picked = $clean_branches.Split(" ") | Sort-Object | Select-Object -Unique | peco --query "$branch_name";
+
+  if($picked.Length -eq 0) {
+    Write-Host "[FATAL] No branch name was given." -ForegroundColor Red;
+    return;
+  }
+
+  Write-Host "Checking out to branch: ($picked)." -ForegroundColor Blue;
+  git checkout $picked;
+}
+
+function gbc() { git-branch-checkout $args; }
 
 ## -----------------------------------------------------------------------------
 function add-gitignore()
@@ -732,9 +789,22 @@ Set-PSReadLineOption -MaximumHistoryCount 1000000
 
 Set-PSReadLineOption -PredictionSource HistoryAndPlugin;
 
+## -----------------------------------------------------------------------------
+Set-PSReadLineKeyHandler -Chord Ctrl+Alt+F3 -ScriptBlock {
+    Write-Host "edit-profile" -ForegroundColor Green
+    edit-profile
+}
+## -----------------------------------------------------------------------------
+Set-PSReadLineKeyHandler -Chord Ctrl+Alt+r -ScriptBlock {
+    Write-Host ". $profile" -ForegroundColor Green
+    [Microsoft.PowerShell.PSConsoleReadLine]::Insert('. $profile')
+}
+
 ##
 ## Visual Studio Compiler
 ##
 
 ## -----------------------------------------------------------------------------
 # Import-VisualStudioEnvironment
+
+Write-Host "[Profile Reloaded]" -ForegroundColor Magenta;

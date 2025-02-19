@@ -142,6 +142,15 @@ Get-Alias | Remove-Alias -Force;
 ## some edge cases that i don't want to deal with right now. - 2025-01-16
 
 ## List
+
+
+function dir() {
+  if($args.Length -eq 0) {
+    Get-ChildItem ".";
+  } else {
+    Get-Childitem $args;
+  }
+};
 function ls() { & "$_CORE_UTILS_DIR/ls" $args; }
 function la() { & "$_CORE_UTILS_DIR/ls" -a  $args; }
 function ll() { & "$_CORE_UTILS_DIR/ls" -al $args; }

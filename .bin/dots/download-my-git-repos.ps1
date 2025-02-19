@@ -9,7 +9,13 @@ $api_url   = "https://api.github.com/users/${user_name}/repos?per_page=100"
 
 $projects_dir = "$HOME/Projects/${user_name}";
 
-
+if($args.Length -gt 0) {
+  $projects_dir = $args[0];
+  if(-not (Test-Path "$projects_dir")) {
+    Write-Output "The directory ($projects_dir) does not exist.";
+    exit;
+  }
+}
 
 ##
 ## Entry Point

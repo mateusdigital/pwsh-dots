@@ -483,6 +483,16 @@ function git-branch-checkout() {
 function gbc() { git-branch-checkout $args; }
 
 ## -----------------------------------------------------------------------------
+function git-submodule-update-init-recursive()
+{
+  git submodule update --init --recursive;
+}
+
+function gsuir() { git-submodule-update-init-recursive; }
+
+
+
+## -----------------------------------------------------------------------------
 function add-gitignore()
 {
   $response = Invoke-RestMethod -Uri "https://www.toptal.com/developers/gitignore/api/list";

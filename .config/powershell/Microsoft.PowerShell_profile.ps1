@@ -20,7 +20,6 @@
 ##    Dot files for windows machines.                                         ##
 ##---------------------------------------------------------------------------~##
 
-
 ##
 ## Environment Vars.
 ##
@@ -40,16 +39,6 @@ $env:SGDK = $SGDK_PATH;
 $GDK_PATH = "M:\Programs\sgdk200"; ## @XXX: HARDCODED!!!!
 $env:GDK = $GDK_PATH;
 
-##
-## Aux functions
-##
-
-## -----------------------------------------------------------------------------
-function _peco()
-{
-  peco $args;
-}
-
 
 ##
 ## Important directories
@@ -60,17 +49,18 @@ $DOTS_BIN_DIR    = "${HOME}/.bin";                  ## The location of our custo
 $DOTS_CONFIG_DIR = "${HOME}/.config";               ## General configuration site.
 $DOTS_PS_DIR     = "${DOTS_CONFIG_DIR}/powershell"; ## Powershell scripts site.
 
-##------------------------------------------------------------------------------
-$_CORE_UTILS_DIR = "${DOTS_BIN_DIR}/dots/win32/coreutils-5.3.0-bin/bin";
-$_FIND_UTILS_DIR = "${DOTS_BIN_DIR}/dots/win32/findutils-4.2.20-2-bin/bin";
-$_DIFF_UTILS_DIR = "${DOTS_BIN_DIR}/dots/win32/diffutils-2.8.7-1-bin/bin";
-
+## -----------------------------------------------------------------------------
 $DOTS_TEMP_DIR = if ($IsWindows) {
   $env:TEMP
 } else {
   "/tmp"
 };
 
+
+##------------------------------------------------------------------------------
+$_CORE_UTILS_DIR = "${DOTS_BIN_DIR}/dots/win32/coreutils-5.3.0-bin/bin";
+$_FIND_UTILS_DIR = "${DOTS_BIN_DIR}/dots/win32/findutils-4.2.20-2-bin/bin";
+$_DIFF_UTILS_DIR = "${DOTS_BIN_DIR}/dots/win32/diffutils-2.8.7-1-bin/bin";
 
 ##
 ## WSL
@@ -101,6 +91,13 @@ function edit-profile()
     "${HOME}/.clang-format"                         `
     "$DOTS_CONFIG_DIR"                              `
     "$DOTS_PS_DIR"                                  `
+    ;
+}
+## -----------------------------------------------------------------------------
+function ep()
+{
+  & $env:VISUAL                                     `
+    "$DOTS_PS_DIR/Microsoft.PowerShell_profile.ps1" `
     ;
 }
 
@@ -149,7 +146,7 @@ Get-Alias | Remove-Alias -Force;
 
 ## List
 
-
+## -----------------------------------------------------------------------------
 function dir() {
   if($args.Length -eq 0) {
     Get-ChildItem ".";
@@ -157,6 +154,8 @@ function dir() {
     Get-Childitem $args;
   }
 };
+
+## -----------------------------------------------------------------------------
 function ls() { & "$_CORE_UTILS_DIR/ls" $args; }
 function la() { & "$_CORE_UTILS_DIR/ls" -a  $args; }
 function ll() { & "$_CORE_UTILS_DIR/ls" -al $args; }
@@ -213,7 +212,7 @@ function cd($target_path = "")
 ##------------------------------------------------------------------------------
 function ide()
 {
-  $result = (ls .sln | _peco);
+  $result = (ls .sln | peco);
   if($result.Length -ne 0) {
     Invoke-Item $result;
   } else {
@@ -224,6 +223,7 @@ function ide()
 ##------------------------------------------------------------------------------
 function f() { files $args; }
 
+## -----------------------------------------------------------------------------
 function files()
 {
   ## Open the Filesystem Manager into a given path.
@@ -260,9 +260,9 @@ function files()
 function go()
 {
   if($args.Length -eq 0) {
-    $result = (gosh -l | _peco);
+    $result = (gosh -l | peco);
   } else {
-    $result = (gosh -l | _peco --query $args);
+    $result = (gosh -l | peco --query $args);
   }
 
   if($result.Length -ne 0) {
@@ -285,7 +285,7 @@ function open()
     }
   }
 
-  $result = (ls | _peco "$value");
+  $result = (ls | peco "$value");
   if($result.Length -ne 0) {
     Invoke-Item $result;
   } else {
@@ -303,6 +303,14 @@ function npm-list-deps() {
   npm list --depth=0 --json | jq -r '.dependencies | keys[]'
 }
 
+function ni()
+{
+  npm install $args;
+}
+
+function nrd() {
+  npm run dev $args;
+}
 
 ##
 ## Network
@@ -417,28 +425,35 @@ $env:PATH         = (_configure_PATH);
 
 
 ##
-## Git
+## Git-Functions
 ##
 
 ##------------------------------------------------------------------------------
 function g()  { git        $args; }
 function gs() { git status $args; }
-function gl() { git log    $args; }
 
-## -----------------------------------------------------------------------------
+function gauthors()
+{
+  git log --format='%an' | Group-Object | Sort-Object Count -Descending | ForEach-Object { "$($_.Name): $($_.Count)" }
+}
+
+## --- LOG ---------------------------------------------------------------------
+function gl() { git log    $args; }
+function glog() { git log --decorate --oneline --graph --all   $args; }
+
+## --- PUSH --------------------------------------------------------------------
 function gp()    { git push $args; }
 function gpush() { git push $args; }
 function gpull() { git pull $args; }
 
-## -----------------------------------------------------------------------------
+## --- RESET -------------------------------------------------------------------
 function greset() { git reset --hard; }
 
-
-## -----------------------------------------------------------------------------
+## --- GUI ---------------------------------------------------------------------
 function gg()  { git gui $args; }
 function gtk() { gitk --all; }
 
-## -----------------------------------------------------------------------------
+## --- NEW BRANCH---------------------------------------------------------------
 function git-branch-new() {
   if($args.Length -eq 0) {
     Write-Host "[FATAL] No branch name was given." -ForegroundColor Red;
@@ -451,10 +466,10 @@ function git-branch-new() {
   git checkout -b "$clean_name";
 }
 
-function gbn() { git-branch-new $args; }
-
-
 ## -----------------------------------------------------------------------------
+function gn() { git-branch-new $args; }
+
+## --- CHECKOUT ----------------------------------------------------------------
 function git-branch-checkout() {
   $branch_name = "";
   if($args.Length -eq 0) {
@@ -486,23 +501,51 @@ function git-branch-checkout() {
   git checkout $picked;
 }
 
-function gbc() { git-branch-checkout $args; }
+## -----------------------------------------------------------------------------
+function gc() { git-branch-checkout $args; }
+
+
+## --- DELETE BRANCH -----------------------------------------------------------
+function git-delete-branch() {
+  $result = $(git --no-pager branch --all);
+  $result = $result | peco;
+  if($result.Length -ne 0) {
+    $branch_name = $result.Replace("*", "").Trim();
+    Write-Output "Deleting branch: ($branch_name)";
+    git branch -D $branch_name;
+  }
+}
 
 ## -----------------------------------------------------------------------------
+function git-delete-remote-branch() {
+  $result = $(git --no-pager branch --all);
+  $result = $result | peco;
+  if($result.Length -eq 0) {
+    return;
+  }
+
+
+  $branch_name = $result.Replace("remotes/origin/", "").Trim();
+  Write-Output "Deleting branch: ($branch_name)";
+  git push origin --delete  "$branch_name";
+}
+
+
+
+## --- SUBMODULE ---------------------------------------------------------------
 function git-submodule-update-init-recursive()
 {
   git submodule update --init --recursive;
 }
 
+## -----------------------------------------------------------------------------
 function gsuir() { git-submodule-update-init-recursive; }
 
-
-
-## -----------------------------------------------------------------------------
+## --- IGNORE ------------------------------------------------------------------
 function add-gitignore()
 {
   $response = Invoke-RestMethod -Uri "https://www.toptal.com/developers/gitignore/api/list";
-  $picked   = $response.Split(",") | _peco;
+  $picked   = $response.Split(",") | peco;
   if(-not $picked -or $picked.Length -eq 0) {
     return;
   }
@@ -546,7 +589,7 @@ function dots()
 ## -----------------------------------------------------------------------------
 function repochecker-all()
 {
-  repochecker.ps1 --remote --submodules --show-all --short;
+  repochecker.ps1 --remote --submodules --show-all $args;
 }
 
 ## -----------------------------------------------------------------------------
@@ -714,7 +757,7 @@ function select-audio()
       }
       Write-Output $device_name;
     }
-  } | _peco;
+  } | peco;
 
   if($selected_device_name.Length -ne 0) {
     $device_id = $null;

@@ -32,13 +32,6 @@ $env:DOTS_IS_VERBOSE             = 0; ## We dont' want a talkative dots.
 $env:EDITOR = "code";
 $env:VISUAL = "code";
 
-## -----------------------------------------------------------------------------
-$SGDK_PATH = "M:\Programs\sgdk200"; ## @XXX: HARDCODED!!!!
-$env:SGDK = $SGDK_PATH;
-
-$GDK_PATH = "M:\Programs\sgdk200"; ## @XXX: HARDCODED!!!!
-$env:GDK = $GDK_PATH;
-
 
 ##
 ## Important directories
@@ -58,9 +51,13 @@ $DOTS_TEMP_DIR = if ($IsWindows) {
 
 
 ##------------------------------------------------------------------------------
-$_CORE_UTILS_DIR = "${DOTS_BIN_DIR}/dots/win32/coreutils-5.3.0-bin/bin";
-$_FIND_UTILS_DIR = "${DOTS_BIN_DIR}/dots/win32/findutils-4.2.20-2-bin/bin";
-$_DIFF_UTILS_DIR = "${DOTS_BIN_DIR}/dots/win32/diffutils-2.8.7-1-bin/bin";
+if($IsWindows) {
+  ## @notice: Needs to have the ending slash, otherwise the path will be wrong.
+  ## Aliases depends that those vars are empty in non windows environments.
+  $_CORE_UTILS_DIR = "${DOTS_BIN_DIR}/dots/win32/coreutils-5.3.0-bin/bin/";
+  $_FIND_UTILS_DIR = "${DOTS_BIN_DIR}/dots/win32/findutils-4.2.20-2-bin/bin/";
+  $_DIFF_UTILS_DIR = "${DOTS_BIN_DIR}/dots/win32/diffutils-2.8.7-1-bin/bin/";
+}
 
 ##
 ## WSL
@@ -156,12 +153,12 @@ function dir() {
 };
 
 ## -----------------------------------------------------------------------------
-function ls() { & "$_CORE_UTILS_DIR/ls" $args; }
-function la() { & "$_CORE_UTILS_DIR/ls" -a  $args; }
-function ll() { & "$_CORE_UTILS_DIR/ls" -al $args; }
+function ls() { & "${_CORE_UTILS_DIR}ls" $args; }
+function la() { & "${_CORE_UTILS_DIR}ls" -a  $args; }
+function ll() { & "${_CORE_UTILS_DIR}ls" -al $args; }
 
 ## Copy
-function cp() { & "$_CORE_UTILS_DIR/cp" $args; }
+function cp() { & "${_CORE_UTILS_DIR}cp" $args; }
 
 ## Json
 function jd() {
@@ -169,7 +166,7 @@ function jd() {
 }
 
 ## Move
-function mv() { & "$_CORE_UTILS_DIR/mv" $args; }
+function mv() { & "${_CORE_UTILS_DIR}mv" $args; }
 
 ## Remove
 function rm() { Remove-Item  $args; } ## Remove file
@@ -319,6 +316,11 @@ function nrd() {
 ##------------------------------------------------------------------------------
 function show-connected-wifi()
 {
+  if(-not $IsWindows) {
+    Write-Output "Not implemented for non-windows";
+    return;
+  }
+
   $wifi_info = netsh wlan show interfaces | Select-String -Pattern "^\s*SSID\s*:\s*(.*)$"
   if ($wifi_info -match "^\s*SSID\s*:\s*(.*)$") {
     $wifi_name = $matches[1].Trim();
@@ -389,7 +391,13 @@ function _configure_PATH()
       "${DOTS_BIN_DIR}",
       "${DOTS_BIN_DIR}/dots",
       "${env:PATH_DEFAULT}"
-    )
+    );
+  }elseif ($IsMacOS) {
+    $paths = @(
+      "${DOTS_BIN_DIR}",
+      "${DOTS_BIN_DIR}/dots",
+      "${env:PATH_DEFAULT}"
+    );
   }
 
   ##
@@ -434,7 +442,10 @@ function gs() { git status $args; }
 
 function gauthors()
 {
-  git log --format='%an' | Group-Object | Sort-Object Count -Descending | ForEach-Object { "$($_.Name): $($_.Count)" }
+  git log --format='%an'          | `
+    Group-Object                  | `
+    Sort-Object Count -Descending | `
+    ForEach-Object { "$($_.Name): $($_.Count)" }
 }
 
 ## --- LOG ---------------------------------------------------------------------
@@ -637,6 +648,10 @@ function __update_ps1_ip_address
   } elseif($IsLinux) {
     $ip = (ip addr show | grep -E 'inet [0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | grep -v '127.0.0.1' | awk '{print $2}' | cut -f1 -d'/');
   }
+  else {
+    ## @todo(md): Add support for non windows...
+    $ip = "[unknown]";
+  }
   return "$ip";
 }
 
@@ -650,6 +665,9 @@ function __update_ps1_icon
   }
   elseif($IsLinux) {
     return "-linux";
+  }
+  elseif ($IsMacOS) {
+    return "-macOS";
   }
   return "-other";
 }
@@ -778,25 +796,6 @@ function select-audio()
 function yt()     { yt-dlp.exe $args; }
 function yt-mp3() { yt-dlp.exe --extract-audio $args }
 
-## -----------------------------------------------------------------------------
-function scale-video()
-{
-  $input_filename = $args[0];
-  Write-Output "${input_filename}";
-
-  $output_filename = "$input_filename" -replace '\.mp4$', '-scaled.mp4';
-  ffmpeg -i "${input_filename}" -vf "scale=trunc(iw/4)*2:trunc(ih/4)*2" "${output_filename}";
-}
-
-## -----------------------------------------------------------------------------
-function scale-video-a-lot()
-{
-  $input_filename = $args[0];
-  Write-Output "${input_filename}";
-
-  $output_filename = "$input_filename" -replace '\.mp4$', '-scaled.mp4';
-  ffmpeg -i "${input_filename}" -vf "scale=trunc(iw/8)*2:trunc(ih/8)*2" "${output_filename}";
-}
 
 
 ##

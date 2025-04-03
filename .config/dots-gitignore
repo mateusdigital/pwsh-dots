@@ -1,26 +1,40 @@
-.pwsh-history.txt
-.docker/*
+
 ## -----------------------------------------------------------------------------
 ## Application Stuff.
 .android/
 .bash_history
+.bash_sessions/
 .cache/
+.CFUserTextEncoding
 .cisco/
+.config/.dots_gitignore
+.config/alacritty/
+.config/asciinema/
 .config/configstore/
-.config/git/
+# .config/git/
+# .config/gitui/
+.config/karabiner/
 .config/simple-update-notifier/
+.config/starship.toml
+.docker/*
 .dotnet/
+.dots-bare/
+.DS_Store
 .git-for-windows-updater
+.gitignore
 .gk/
 .gnupg/
 .gradle/
 .l7tech/
 .lesshst
 .librarymanager/
+.local/
 .minikube/
 .nuget/
 .openshot_qt/
+.pwsh-history.txt
 .rest-client/
+.shellcheckrc
 .ssh/
 .swt/
 .templateengine/
@@ -28,11 +42,17 @@
 .vifm/*
 .VirtualBox/
 .vs-kubernetes/
+.vscode-server/
 .vscode/
-npm-cache/
-scoop/
-IntelGraphicsProfiles/
 java_error_in_studio.hprof
+##
+Applications/
+IntelGraphicsProfiles/
+Library/
+Movies/
+npm-cache/
+Public/
+scoop/
 
 ## -----------------------------------------------------------------------------
 ## Linux Things

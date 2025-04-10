@@ -1,50 +1,148 @@
+##
+## Private things...
+##
 
-## -----------------------------------------------------------------------------
-## Application Stuff.
+##------------------------------------------------------------------------------
+.*_history
+*private*
+.bashrc_private
+
+Google_Drive/
+GoogleDrive/
+
+##
+## Local
+##------------------------------------------------------------------------------
+
+##
+## Config
+##------------------------------------------------------------------------------
 .android/
 .bash_history
+.bash_logout
+.bash_logout
+.bash_profile
 .bash_sessions/
+.bash_sessions/*
+.bashdb_hist
+.bin/_repochecker.py
+.bin/dots/win32/_portable/
+.bin/repochecker.ps1
 .cache/
+.cargo/
 .CFUserTextEncoding
 .cisco/
 .config/.dots_gitignore
+.config/.gsd-keyboard*
 .config/alacritty/
 .config/asciinema/
+.config/asciinema/install-id
+.config/autostart/
+.config/coc/
+.config/Code/
 .config/configstore/
-# .config/git/
-# .config/gitui/
+.config/create-next-app-nodejs/
+.config/dconf/
+.config/enchant/
+.config/evolution/
+.config/gatsby/
+.config/GIMP/
+.config/gitui/
+.config/gnome-initial-setup-done
+.config/godot/
+.config/google-chrome/
+.config/gosh
+.config/gosh/gosh-paths.txt
+.config/grammarly*
+.config/gtk*
+.config/ibus/
+.config/input-remapper/
+.config/JetBrains/
 .config/karabiner/
+.config/karabiner/automatic_backups/
+.config/kde.org/*
+.config/menus/
+.config/mimeapps.list
+.config/monitors.xml
+.config/nautilus/
+.config/nextjs-nodejs/
+.config/obs-studio/*
+.config/pulse/
+.config/rncbc.org/*
 .config/simple-update-notifier/
+.config/spicy/*
 .config/starship.toml
+.config/transmission/*
+.config/transmission/settings.json
+.config/user-dirs*
+.config/vifm/*
+.config/vlc/*
+.config/ytdl-gui/
+.cosmic/
+.dbus-keyrings
 .docker/*
 .dotnet/
+.dotnet/
+.dots_bare/
+.dots-bare/
 .dots-bare/
 .DS_Store
+.emsdk/
+.expo/
+.fzf/
+.gem/
 .git-for-windows-updater
 .gitignore
 .gk/
+.gnome/
 .gnupg/
 .gradle/
+.java/
 .l7tech/
 .lesshst
+.lesshst
+.lib/
 .librarymanager/
 .local/
+.local/share/
+.local/lib/
 .minikube/
+.motd_shown
+.motd_shown
+.npm/
 .nuget/
+.nuget/
+.nvm/
 .openshot_qt/
 .pwsh-history.txt
 .rest-client/
+.sane/xsane/*
+.scrap_files/
 .shellcheckrc
 .ssh/
+.ssh/
+.sudo_as_admin_successful
+.sudo_as_admin_successful
 .swt/
 .templateengine/
+.terminfo/*
 .th-client/
+.vagrant.d/
+.vagrant/**/.vagrant
 .vifm/*
+.vim/
+.viminfo
+.VirtualBox*/
 .VirtualBox/
 .vs-kubernetes/
 .vscode-server/
 .vscode/
+.wget-hsts
+.yarn/
 java_error_in_studio.hprof
+
+##
+## Applications
 ##
 Applications/
 IntelGraphicsProfiles/
@@ -53,21 +151,84 @@ Movies/
 npm-cache/
 Public/
 scoop/
+coc/
+git/
+Nuget/
+NuGet/
+yarn/
+procps/
+nvim/plugin/
+fzf/*.bash
+fzf/*.fish
 
+##
+## Folders
+##------------------------------------------------------------------------------
+## General
+AppData/
+Applications/
+Desktop/
+Documents/
+Downloads/
+Library/
+Movies/
+Music/
+Pictures/
+Public/
+Videos/
+VirtualBox*/
+
+##
+## SSH folders
+macbook-air
+macbook-pro
+evm
+mateus.digital
+
+
+##
+## Mac
+##--------------------------------------------------------------------------------
+.DS_Store
+.CFUserText*
+.Trash
+
+##
+## Windows
+##--------------------------------------------------------------------------------
+NTUSER*
+ntuser*
+
+##
+## GNU/Linux
+##--------------------------------------------------------------------------------
+*.deb
+.dbus/
+.snap/
+snap/
+.fontconfig/
+.gnupg/
+.local/state/
+.pki/
+
+## Stop ignoring it and add the rc files to track the config.
+.jackdrc
+.hplip/*
+
+##
+## Application Stuff.
 ## -----------------------------------------------------------------------------
-## Linux Things
-##.local/
-.local/share/powershell/*
+.mateusdigital/
 
-.bash_logout
-.motd_shown
-.sudo_as_admin_successful
-.viminfo
-.wget-hsts
+##
+## Linux Things
+## -----------------------------------------------------------------------------
+##.local/
 snap/
 
-## -----------------------------------------------------------------------------
+##
 ## Windows Folders
+## -----------------------------------------------------------------------------
 AppData/
 Application Data/
 Contacts/
@@ -98,14 +259,15 @@ source/
 NTUSER.DAT*
 ntuser*
 
-## -----------------------------------------------------------------------------
+##
 ## Other things...
+## -----------------------------------------------------------------------------
 pwsh-dots.git
 pwsh-dots-bootstrap-backup
 pwsh-dots
 .pwsh-dots
 
-.stdmatt
-.config/gosh
-.bin/_repochecker.py
-.bin/repochecker.ps1
+win_home
+win-home
+
+Projects/

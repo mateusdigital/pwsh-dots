@@ -153,7 +153,10 @@ function dir() {
 };
 
 ## -----------------------------------------------------------------------------
-function ls() { & "${_CORE_UTILS_DIR}ls" $args; }
+if($IsWindows) {
+  function ls() { & "${_CORE_UTILS_DIR}ls" $args; }
+}
+
 function la() { & "${_CORE_UTILS_DIR}ls" -a  $args; }
 function ll() { & "${_CORE_UTILS_DIR}ls" -al $args; }
 
@@ -396,6 +399,10 @@ function _configure_PATH()
     $paths = @(
       "${DOTS_BIN_DIR}",
       "${DOTS_BIN_DIR}/dots",
+      "${DOTS_BIN_DIR}/dots/macos",
+      ## mateusdigital
+      "${HOME}/.mateusdigital/bin",
+      ## Rest
       "${env:PATH_DEFAULT}"
     );
   }
@@ -624,6 +631,8 @@ function __rgb_from_text()
   param(
     [string]$text
   )
+
+  return $text;
 
   $bytes_to_hash = [System.Text.Encoding]::UTF8.GetBytes($text)
   $hash_bytes    = $__sha256.ComputeHash($bytes_to_hash);

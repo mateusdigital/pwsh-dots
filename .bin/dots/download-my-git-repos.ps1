@@ -61,5 +61,9 @@ foreach($item in $response) {
   }
 
   Write-Output "Downloading: ($name) to ${projects_dir}";
-  git clone "git@github.com:${user_name}/${name}" "$target_dir";
+  if($DownloadViaSSH) {
+    git clone "git@github.com:${user_name}/${name}" "$target_dir";
+  } else {
+    git clone "https://github.com/${user_name}/${name}" "$target_dir";
+  }
 }

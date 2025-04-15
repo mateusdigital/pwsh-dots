@@ -184,7 +184,11 @@ function jd() {
 ## Move
 
 ## -----------------------------------------------------------------------------
-function mv() { & "${_CORE_UTILS_DIR}mv" $args; }
+## -----------------------------------------------------------------------------
+if($IsWindows) {
+  ## This avoids recursion on the ls function.
+  function mv() { & "${_CORE_UTILS_DIR}mv" $args; }
+}
 
 ## Remove
 
@@ -502,6 +506,7 @@ function greset() { git reset --hard; }
 
 ## --- GUI ---------------------------------------------------------------------
 function gg()  { git gui $args; }
+function gui()  { gitui $args; }
 function gtk() { gitk --all; }
 
 ## --- NEW BRANCH---------------------------------------------------------------

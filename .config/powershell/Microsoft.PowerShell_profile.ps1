@@ -83,19 +83,21 @@ function edit-profile()
 {
   & $env:VISUAL                                     `
     "$DOTS_PS_DIR/Microsoft.PowerShell_profile.ps1" `
+    ;
+}
+
+## -----------------------------------------------------------------------------
+function edit-profile-full()
+{
+  & $env:VISUAL                                     `
+    "$DOTS_PS_DIR/Microsoft.PowerShell_profile.ps1" `
     "$DOTS_BIN_DIR"                                 `
     "${HOME}/.gitconfig"                            `
     "${HOME}/.clang-format"                         `
     "$DOTS_CONFIG_DIR"                              `
     "$DOTS_PS_DIR"                                  `
     ;
-}
-## -----------------------------------------------------------------------------
-function ep()
-{
-  & $env:VISUAL                                     `
-    "$DOTS_PS_DIR/Microsoft.PowerShell_profile.ps1" `
-    ;
+
 }
 
 ## -----------------------------------------------------------------------------
@@ -148,36 +150,65 @@ function dir() {
   if($args.Length -eq 0) {
     Get-ChildItem ".";
   } else {
-    Get-Childitem $args;
+    Get-ChildItem $args;
   }
 };
 
 ## -----------------------------------------------------------------------------
 if($IsWindows) {
+  ## This avoids recursion on the ls function.
   function ls() { & "${_CORE_UTILS_DIR}ls" $args; }
 }
 
+## -----------------------------------------------------------------------------
 function la() { & "${_CORE_UTILS_DIR}ls" -a  $args; }
+
+## -----------------------------------------------------------------------------
 function ll() { & "${_CORE_UTILS_DIR}ls" -al $args; }
 
+
 ## Copy
+
+## -----------------------------------------------------------------------------
 function cp() { & "${_CORE_UTILS_DIR}cp" $args; }
 
+
 ## Json
+
+## -----------------------------------------------------------------------------
 function jd() {
  "$(Get-Clipboard)" | jq
 }
 
+
 ## Move
+
+## -----------------------------------------------------------------------------
 function mv() { & "${_CORE_UTILS_DIR}mv" $args; }
 
 ## Remove
-function rm() { Remove-Item  $args; } ## Remove file
+
+## -----------------------------------------------------------------------------
+function rm() {
+  if(($args.Length -gt 0) -and ($args[0] -eq "-rf")) {
+    Write-Host "Use rd instead of rm -rf" -ForegroundColor Red;
+    return;
+  }
+
+  Remove-Item  $args;
+}
+
+## -----------------------------------------------------------------------------
 function rd() { Remove-Item -Recurse -Force $args; } ## Remove Directory...
 
 
+##
+## File System usage aliases
+##
+
 ##------------------------------------------------------------------------------
 $global:OLDPWD = "";
+
 function cd($target_path = "")
 {
   ## cd
@@ -272,7 +303,7 @@ function go()
 
 
 ##------------------------------------------------------------------------------
-function open()
+function open-item()
 {
   $value = "";
 
@@ -285,7 +316,7 @@ function open()
     }
   }
 
-  $result = (ls | peco "$value");
+  $result = (ls | peco --query "$value");
   if($result.Length -ne 0) {
     Invoke-Item $result;
   } else {
@@ -303,11 +334,13 @@ function npm-list-deps() {
   npm list --depth=0 --json | jq -r '.dependencies | keys[]'
 }
 
+##------------------------------------------------------------------------------
 function ni()
 {
   npm install $args;
 }
 
+##------------------------------------------------------------------------------
 function nrd() {
   npm run dev $args;
 }
@@ -320,7 +353,7 @@ function nrd() {
 function show-connected-wifi()
 {
   if(-not $IsWindows) {
-    Write-Output "Not implemented for non-windows";
+    Write-Error "Not implemented for non-windows";
     return;
   }
 
@@ -395,7 +428,8 @@ function _configure_PATH()
       "${DOTS_BIN_DIR}/dots",
       "${env:PATH_DEFAULT}"
     );
-  }elseif ($IsMacOS) {
+  }
+  elseif ($IsMacOS) {
     $paths = @(
       "${DOTS_BIN_DIR}",
       "${DOTS_BIN_DIR}/dots",
@@ -430,7 +464,6 @@ function path-list()
     Write-Output "  $item";
   }
 }
-
 
 ##------------------------------------------------------------------------------
 $env:PATH_DEFAULT = (_get_default_PATH);
@@ -495,8 +528,13 @@ function git-branch-checkout() {
   }
 
   $all_branches = (git branch --all --list);
-  $clean_branches = "";
+  $success = $?;
+  if(-not $success) {
+    Write-Host "Failed to get branches from git." -ForegroundColor Red;
+    return;
+  }
 
+  $clean_branches = "";
   for($i = 0; $i -lt $all_branches.Length; $i++) {
     $clean_name = $all_branches[$i];
     $clean_name = $clean_name.Replace("*", "").Trim().Replace("remotes/origin/", "");
@@ -508,7 +546,10 @@ function git-branch-checkout() {
     $clean_branches += "$clean_name ";
   }
 
-  $picked = $clean_branches.Split(" ") | Sort-Object | Select-Object -Unique | peco --query "$branch_name";
+  $picked = $clean_branches.Split(" ") `
+    | Sort-Object `
+    | Select-Object -Unique `
+    | peco --query "$branch_name";
 
   if($picked.Length -eq 0) {
     Write-Host "[FATAL] No branch name was given." -ForegroundColor Red;
@@ -527,6 +568,7 @@ function gc() { git-branch-checkout $args; }
 function git-delete-branch() {
   $result = $(git --no-pager branch --all);
   $result = $result | peco;
+
   if($result.Length -ne 0) {
     $branch_name = $result.Replace("*", "").Trim();
     Write-Output "Deleting branch: ($branch_name)";
@@ -560,7 +602,7 @@ function git-submodule-update-init-recursive()
 function gsuir() { git-submodule-update-init-recursive; }
 
 ## --- IGNORE ------------------------------------------------------------------
-function add-gitignore()
+function git-ignore()
 {
   $response = Invoke-RestMethod -Uri "https://www.toptal.com/developers/gitignore/api/list";
   $picked   = $response.Split(",") | peco;
@@ -607,7 +649,7 @@ function dots()
 ## -----------------------------------------------------------------------------
 function repochecker-all()
 {
-  repochecker.ps1 --remote --submodules --show-all $args;
+  repochecker --remote --submodules --show-all $args;
 }
 
 ## -----------------------------------------------------------------------------
@@ -678,6 +720,7 @@ function __update_ps1_icon
   elseif ($IsMacOS) {
     return "-macOS";
   }
+
   return "-other";
 }
 
@@ -771,6 +814,12 @@ function prompt()
 ## -----------------------------------------------------------------------------
 function select-audio()
 {
+  if(-not $IsWindows) {
+    ## @todo(md): Add support for non windows.
+    Write-Host "Not implemented for non-windows" -ForegroundColor Red;
+    return;
+  }
+
   $ignore_list  = @("DELL S3422DWG");
   $devices_list = (Get-AudioDevice -List);
 
@@ -802,8 +851,8 @@ function select-audio()
 }
 
 ## -----------------------------------------------------------------------------
-function yt()     { yt-dlp.exe $args; }
-function yt-mp3() { yt-dlp.exe --extract-audio $args }
+function yt()     { yt-dlp $args; }
+function yt-mp3() { yt-dlp --extract-audio $args }
 
 
 
@@ -837,6 +886,7 @@ function touch_all_files()
 
 ## -----------------------------------------------------------------------------
 if (-not (Get-Module -Name PSReadLine)) {
+  Write-Host "[INFO] Loading PSReadLine" -ForegroundColor Yellow;
   Import-Module PSReadLine;
 }
 

@@ -412,7 +412,7 @@ function _configure_PATH()
   ##
   if($IsWindows) {
     $paths = @(
-      ## Program
+      ## Programs
       "C:/Program Files/nodejs",
       "${env:AppData}/npm",
       ## Dots

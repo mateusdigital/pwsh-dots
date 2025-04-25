@@ -1,30 +1,71 @@
+##----------------------------------------------------------------------------##
+##                               *       +                                    ##
+##                         '                  |                               ##
+##                     ()    .-.,="``"=.    - o -                             ##
+##                           '=/_       \     |                               ##
+##                        *   |  '=._    |                                    ##
+##                             \     `=./`,        '                          ##
+##                          .   '=.__.=' `='      *                           ##
+##                 +                         +                                ##
+##                      O      *        '       .                             ##
+##                                                                            ##
+##  File      : download-my-git-repos.ps1                                     ##
+##  Project   : dots                                                          ##
+##  Date      : 2025-04-23                                                    ##
+##  License   : See project's COPYING.TXT for full info.                      ##
+##  Author    : mateus.digital <hello@mateus.digital>                         ##
+##  Copyright : mateus.digital - 2025                                         ##
+##                                                                            ##
+##  Description :                                                             ##
+##                                                                            ##
+##----------------------------------------------------------------------------##
 
 ##
 ## Vars
 ##
 
 ## -----------------------------------------------------------------------------
-$user_name = "mateusdigital";
-$api_url   = "https://api.github.com/users/${user_name}/repos?per_page=100"
+$USER_NAME = "mateusdigital";
+$API_URL   = "https://api.github.com/users/${USER_NAME}/repos?per_page=100"
 
-$projects_dir = "$HOME/Projects/${user_name}";
+$ProjectsDir    = "${HOME}/Projects/${USER_NAME}";
+$DownloadViaSSH = $false;
 
-if($args.Length -gt 0) {
-  $projects_dir = $args[0];
-  if(-not (Test-Path "$projects_dir")) {
-    Write-Output "The directory ($projects_dir) does not exist.";
+##
+## Read command line args
+##
+
+## -----------------------------------------------------------------------------
+for($i = 0 ; $i -lt $args.Count; $i++) {
+  $arg = $args[$i];
+  if($arg -eq "--help") {
+    Write-Output "Usage: download-my-git-repos.ps1 [--ssh] [--dir <dir>]";
     exit;
   }
+
+  if($arg -eq "--ssh") {
+    $DownloadViaSSH = $true;
+    continue;
+  }
+
+  if($arg -eq "--dir") {
+    $ProjectsDir = $args[$i + 1];
+    continue;
+  }
 }
+
+Write-Host "Projects directory: $ProjectsDir";
+Write-Host "Downloading via ssh: $DownloadViaSSH";
+
 
 ##
 ## Entry Point
 ##
 
 ## -----------------------------------------------------------------------------
-$response = Invoke-RestMethod -Uri $api_url;
+$response = Invoke-RestMethod -Uri $API_URL;
 
-# Output the repository names
+## Output the repository names
 foreach($item in $response) {
   $name   = $item.name
   $topics = $item.topics;
@@ -49,21 +90,21 @@ foreach($item in $response) {
     $type = "website";
   }
 
-  $target_dir = "$projects_dir/$type/$name";
+  $target_dir = "$ProjectsDir/$type/$name";
   if(Test-Path "$target_dir") {
-    Write-Output "($name) is already clonned...";
+    Write-Output "($name) is already cloned...";
     continue;
   }
 
-  $base_dir = "$projects_dir/$type";
+  $base_dir = "$ProjectsDir/$type";
   if(-not (Test-Path "$base_dir")) {
     New-Item -ItemType Directory -Path  "$base_dir";
   }
 
-  Write-Output "Downloading: ($name) to ${projects_dir}";
+  Write-Output "Downloading: ($name) to ${ProjectsDir}";
   if($DownloadViaSSH) {
-    git clone "git@github.com:${user_name}/${name}" "$target_dir";
+    git clone "git@github.com:${USER_NAME}/${name}" "$target_dir";
   } else {
-    git clone "https://github.com/${user_name}/${name}" "$target_dir";
+    git clone "https://github.com/${USER_NAME}/${name}" "$target_dir";
   }
 }

@@ -20,6 +20,23 @@
 ##    Dot files for windows machines.                                         ##
 ##---------------------------------------------------------------------------~##
 
+
+##
+## Check if Powershell is the pwsh 7+ version.
+##
+
+## -----------------------------------------------------------------------------
+function IsPowershellTooOld()
+{
+  return ($PSVersionTable.PSVersion.Major -lt 7);
+}
+
+
+if (IsPowershellTooOld) {
+  Write-Host "[OLD POWERSHELL]" -ForegroundColor White -BackgroundColor Red;
+  exit;
+}
+
 ##
 ## Environment Vars.
 ##

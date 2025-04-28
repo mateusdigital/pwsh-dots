@@ -501,6 +501,16 @@ $env:PATH         = (_configure_PATH);
 function g()  { git        $args; }
 function gs() { git status $args; }
 
+function galiases() {
+  $values = (git config --get-regexp ^alias\.);
+  foreach($value in $values) {
+    $alias_name = $value.Split(" ")[0].Replace("alias.", "");
+    Write-Output "${alias_name}";
+  }
+}
+
+function galias() { galiases $args; }
+
 function gauthors()
 {
   git log --format='%an'          | `

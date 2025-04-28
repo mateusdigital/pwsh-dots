@@ -18,7 +18,6 @@ GoogleDrive/
 ## Config
 ##------------------------------------------------------------------------------
 .android/
-
 .bash_history
 .bash_logout
 .bash_logout
@@ -88,6 +87,7 @@ GoogleDrive/
 .dots-bare/
 .DS_Store
 .emsdk/
+.emulator_console_auth_token
 .expo/
 .fzf/
 .gem/
@@ -102,9 +102,10 @@ GoogleDrive/
 .lesshst
 .lib/
 .librarymanager/
+.lldb/
 .local/
-.local/share/
 .local/lib/
+.local/share/
 .minikube/
 .motd_shown
 .motd_shown

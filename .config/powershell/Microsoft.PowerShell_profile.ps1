@@ -38,6 +38,22 @@ if (IsPowershellTooOld) {
 }
 
 ##
+## Useful functions
+##
+
+## -----------------------------------------------------------------------------
+function UnixSlash() {
+  return $args[0].Replace("\", "/");
+}
+
+## -----------------------------------------------------------------------------
+function WinSlash() {
+  return $args[0].Replace("/", "\");
+
+}
+
+
+##
 ## Environment Vars.
 ##
 
@@ -90,10 +106,32 @@ function IsWSL()
   return (uname -a | grep microsoft).Length -gt 0;
 }
 
+function Load-VSDevShell {
+}
+
 
 ##
 ## Profiles
 ##
+
+## -----------------------------------------------------------------------------
+function devshell()
+{
+  $vsInstallPath = (vswhere -latest -property installationPath)
+  if (-not $vsInstallPath) {
+      Write-Error "Visual Studio not found!" -ForegroundColor Red;
+      return;
+  }
+  $vsDevCmd = (Join-Path $vsInstallPath "Common7\Tools\Launch-VsDevShell.ps1");
+
+  Write-Host "Loading Visual Studio DevShell: $vsDevCmd" -ForegroundColor Green;
+  if (-not (Test-Path $vsDevCmd)) {
+      Write-Error "VsDevCmd.bat not found!" -ForegroundColor Red;
+      return
+  }
+
+  & "$vsDevCmd";
+}
 
 ## -----------------------------------------------------------------------------
 function edit-profile()
@@ -190,21 +228,14 @@ function ll() { & "${_CORE_UTILS_DIR}ls" -al $args; }
 function cp() { & "${_CORE_UTILS_DIR}cp" $args; }
 
 
-## Json
-
-## -----------------------------------------------------------------------------
-function jd() {
- "$(Get-Clipboard)" | jq
-}
-
 
 ## Move
 
 ## -----------------------------------------------------------------------------
-## -----------------------------------------------------------------------------
 if($IsWindows) {
   ## This avoids recursion on the ls function.
   function mv() { & "${_CORE_UTILS_DIR}mv" $args; }
+  ## This avoids recursion on the ls function.
 }
 
 ## Remove
@@ -216,7 +247,7 @@ function rm() {
     return;
   }
 
-  Remove-Item  $args;
+  Remove-Item $args;
 }
 
 ## -----------------------------------------------------------------------------
@@ -257,14 +288,21 @@ function cd($target_path = "")
   }
 
   $global:OLDPWD = [string](Get-Location);
-  Set-Location $target_path; ## Needs to be the Powershell builtin or infinity recursion
+  if(Test-Path $target_path -PathType Leaf) {
+    Write-Host "[INFO] Target path is a file, going to the parent dir." -ForegroundColor Yellow;
+    Write-Host "  $target_path" -ForegroundColor Cyan;
+    $target_path = Split-Path -Path $target_path -Parent;
+  }
+
+  ## Needs to be the Powershell builtin or infinity recursion
+  Set-Location $target_path;
 }
 
 
 ##------------------------------------------------------------------------------
 function ide()
 {
-  $result = (ls .sln | peco);
+  $result = (ls $args .sln | peco);
   if($result.Length -ne 0) {
     Invoke-Item $result;
   } else {
@@ -410,6 +448,25 @@ function show-wifi-password()
 
 
 ##
+## Android
+##
+
+$env:ANDROID_HOME     = "C:\Users\mateusdigital\AppData\Local\Android\Sdk";
+$env:ANDROID_SDK_ROOT     = "C:\Users\mateusdigital\AppData\Local\Android\Sdk";
+
+$env:ANDROID_PATH = "${env:ANDROID_HOME}/cmdline-tools/latest/bin;" `
+                  + "${env:ANDROID_HOME}/emulator;"          `
+                  + "${env:ANDROID_HOME}/platform-tools;";
+
+
+function android-list-paths() {
+  Write-Host "ANDROID_HOME     $env:ANDROID_HOME";
+  Write-Host "ANDROID_SDK_ROOT $env:ANDROID_SDK_ROOT";
+  Write-Host "ANDROID_PATH     " (WinSlash $env:ANDROID_PATH).Replace(";","`n");
+}
+
+
+##
 ## PATH
 ##
 
@@ -428,21 +485,46 @@ function _configure_PATH()
 {
   ##
   if($IsWindows) {
+    ## Programs
     $paths = @(
-      ## Programs
       "C:/Program Files/nodejs",
-      "${env:AppData}/npm",
-      ## Dots
+      "${env:AppData}/npm"
+    );
+
+    ## Dots
+    $paths += @(
       "${DOTS_BIN_DIR}",
       "${DOTS_BIN_DIR}/dots",
       "${DOTS_BIN_DIR}/dots/win32",
-      "${DOTS_BIN_DIR}/dots/win32/ProcessExplorer",
-      ## mateusdigital
-      "${HOME}/.mateusdigital/bin",
-      ## Rest
-      "${env:PATH_DEFAULT}"
+      "${DOTS_BIN_DIR}/dots/win32/ProcessExplorer"
+    );
+
+    ## mateusdigital
+    $paths += @(
+      "${HOME}/.mateusdigital/bin"
+    );
+
+    ## Java / Android
+    if($env:JAVA_HOME) {
+      $paths += @(
+        "${env:JAVA_HOME}",
+        "${env:JAVA_HOME}/bin"
+      );
+
+      "${env:ANDROID_PATH}"
+    }
+
+    ## Coreutils
+    $paths += @(
+      "$_FIND_UTILS_DIR",
+      "$_DIFF_UTILS_DIR"
     )
   }
+
+  ##
+  ## Linux
+  ##
+
   elseif($IsLinux) {
     $paths = @(
       "${DOTS_BIN_DIR}",
@@ -450,6 +532,11 @@ function _configure_PATH()
       "${env:PATH_DEFAULT}"
     );
   }
+
+  ##
+  ## Mac
+  ##
+
   elseif ($IsMacOS) {
     $paths = @(
       "${DOTS_BIN_DIR}",
@@ -468,6 +555,7 @@ function _configure_PATH()
     $path_separator_char = ";";
   }
 
+  $paths += "${env:PATH_DEFAULT}";
   return $paths -join $path_separator_char
 }
 

@@ -1,0 +1,26 @@
+source ~/.vimrc
+echo "Loaded .ideavimrc"
+nnoremap <leader>r :source ~/.ideavimrc<CR>:echo "Reloaded .ideavimrc"<CR>
+
+" ==============================
+" IdeaVim-Specific Options
+" ==============================
+set ideajoin
+set ideaput
+set multiple-cursors
+set surround
+set idearefactormode=keep
+set highlightedyank
+
+" ==============================
+" IntelliJ Action Bindings (Optional)
+" ==============================
+" nnoremap <leader>sv :action SplitVertically<CR>
+" nnoremap <leader>sc :action UnsplitAll<CR>
+" nmap <leader>h :action PreviousTab<CR>
+" nmap <leader>l :action NextTab<CR>
+" nnoremap <leader>gf :action GotoFile<CR>
+" nnoremap <leader>gc :action GotoClass<CR>
+" nnoremap <leader>gt :action GotoTest<CR>
+" nnoremap <leader>rc :action RunClass<CR>
+" nnoremap ,rc :action ChooseRunConfiguration<CR>

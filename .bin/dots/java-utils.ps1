@@ -181,8 +181,13 @@ function java-set-version()
 
   $env:PATH      = (SystemPath $new_path);
   $env:JAVA_HOME = (SystemPath $new_java_home);
- [Environment]::SetEnvironmentVariable("JAVA_HOME", $new_java_home, "User");
- [Environment]::SetEnvironmentVariable("PATH",      $new_path,      "User");
+  Write-Host "Set `$env:PATH...";
+
+  # [Environment]::SetEnvironmentVariable("JAVA_HOME", $new_java_home, "User");
+  # [Environment]::SetEnvironmentVariable("PATH",      $new_path,      "User");
+  Set-ItemProperty -Path "HKCU:\Environment" -Name "JAVA_HOME" -Value $new_java_home
+  Set-ItemProperty -Path "HKCU:\Environment" -Name "PATH"      -Value $new_path
+  Write-Host "Set Environment Variables";
 
 
   Write-Host "New PATH: $env:PATH" -Foreground Green;

@@ -106,10 +106,6 @@ function IsWSL()
   return (uname -a | grep microsoft).Length -gt 0;
 }
 
-function Load-VSDevShell {
-}
-
-
 ##
 ## Profiles
 ##
@@ -117,15 +113,15 @@ function Load-VSDevShell {
 ## -----------------------------------------------------------------------------
 function devshell()
 {
-  $vsInstallPath = (vswhere -latest -property installationPath)
-  if (-not $vsInstallPath) {
+  $vs_install_path = (vswhere -latest -property installationPath)
+  if (-not $vs_install_path) {
       Write-Error "Visual Studio not found!" -ForegroundColor Red;
       return;
   }
-  $vsDevCmd = (Join-Path $vsInstallPath "Common7\Tools\Launch-VsDevShell.ps1");
 
-  Write-Host "Loading Visual Studio DevShell: $vsDevCmd" -ForegroundColor Green;
-  if (-not (Test-Path $vsDevCmd)) {
+  $vs_dev_cmd = (Join-Path $vs_install_path "Common7\Tools\Launch-VsDevShell.ps1");
+  Write-Host "Loading Visual Studio DevShell: $vs_dev_cmd" -ForegroundColor Green;
+  if (-not (Test-Path $vs_dev_cmd)) {
       Write-Error "VsDevCmd.bat not found!" -ForegroundColor Red;
       return
   }
@@ -138,6 +134,15 @@ function edit-profile()
 {
   & $env:VISUAL                                     `
     "$DOTS_PS_DIR/Microsoft.PowerShell_profile.ps1" `
+    ;
+}
+
+function edit-git()
+{
+
+  & $env:VISUAL                                     `
+    "${HOME}/.gitconfig"                            `
+    "$DOTS_CONFIG_DIR"                              `
     ;
 }
 
@@ -212,20 +217,20 @@ function dir() {
 ## -----------------------------------------------------------------------------
 if($IsWindows) {
   ## This avoids recursion on the ls function.
-  function ls() { & "${_CORE_UTILS_DIR}ls" $args; }
+  function ls() { & "${_CORE_UTILS_DIR}ls" @args; }
 }
 
 ## -----------------------------------------------------------------------------
-function la() { & "${_CORE_UTILS_DIR}ls" -a  $args; }
+function la() { & "${_CORE_UTILS_DIR}ls" -a  @args; }
 
 ## -----------------------------------------------------------------------------
-function ll() { & "${_CORE_UTILS_DIR}ls" -al $args; }
+function ll() { & "${_CORE_UTILS_DIR}ls" -al @args; }
 
 
 ## Copy
 
 ## -----------------------------------------------------------------------------
-function cp() { & "${_CORE_UTILS_DIR}cp" $args; }
+function cp() { & "${_CORE_UTILS_DIR}cp" @args; }
 
 
 
@@ -233,9 +238,8 @@ function cp() { & "${_CORE_UTILS_DIR}cp" $args; }
 
 ## -----------------------------------------------------------------------------
 if($IsWindows) {
-  ## This avoids recursion on the ls function.
-  function mv() { & "${_CORE_UTILS_DIR}mv" $args; }
-  ## This avoids recursion on the ls function.
+  ## This avoids recursion on the mv function.
+  function mv() { & "${_CORE_UTILS_DIR}mv" @args; }
 }
 
 ## Remove
@@ -251,7 +255,8 @@ function rm() {
 }
 
 ## -----------------------------------------------------------------------------
-function rd() { Remove-Item -Recurse -Force $args; } ## Remove Directory...
+## Remove Directory...
+function rd() { Remove-Item -Recurse -Force $args; }
 
 
 ##
@@ -302,7 +307,7 @@ function cd($target_path = "")
 ##------------------------------------------------------------------------------
 function ide()
 {
-  $result = (ls $args .sln | peco);
+  $result = (ls @args .sln | peco);
   if($result.Length -ne 0) {
     Invoke-Item $result;
   } else {
@@ -311,7 +316,7 @@ function ide()
 }
 
 ##------------------------------------------------------------------------------
-function f() { files $args; }
+function f() { files @args; }
 
 ## -----------------------------------------------------------------------------
 function files()
@@ -343,7 +348,6 @@ function files()
   }
 
   & $file_manager $target_path;
-  return;
 }
 
 ##------------------------------------------------------------------------------
@@ -404,6 +408,7 @@ function nrd() {
   npm run dev $args;
 }
 
+
 ##
 ## Network
 ##
@@ -437,12 +442,14 @@ function show-wifi-password()
   } else {
     $wifi_name = (show-connected-wifi);
   }
+
   $pattern   = "^\s*Key Content\s*:\s*(.+)$"
   $wifi_pass = (netsh wlan show profile "${wifi_name}" key = clear | Select-String -Pattern "$pattern");
   if ($wifi_pass -match "$pattern") {
     $wifi_pass = $matches[1].Trim();
     return $wifi_pass;
   }
+
   return "";
 }
 
@@ -451,8 +458,9 @@ function show-wifi-password()
 ## Android
 ##
 
+## -----------------------------------------------------------------------------
 $env:ANDROID_HOME     = "C:\Users\mateusdigital\AppData\Local\Android\Sdk";
-$env:ANDROID_SDK_ROOT     = "C:\Users\mateusdigital\AppData\Local\Android\Sdk";
+$env:ANDROID_SDK_ROOT = "C:\Users\mateusdigital\AppData\Local\Android\Sdk";
 
 $env:ANDROID_PATH = "${env:ANDROID_HOME}/cmdline-tools/latest/bin;" `
                   + "${env:ANDROID_HOME}/emulator;"          `
@@ -463,6 +471,17 @@ function android-list-paths() {
   Write-Host "ANDROID_HOME     $env:ANDROID_HOME";
   Write-Host "ANDROID_SDK_ROOT $env:ANDROID_SDK_ROOT";
   Write-Host "ANDROID_PATH     " (WinSlash $env:ANDROID_PATH).Replace(";","`n");
+}
+
+##
+## Java
+##
+
+## -----------------------------------------------------------------------------
+$JAVA_UTILS = "$DOTS_BIN_DIR/dots/java-utils.ps1";
+function set-java() {
+  . $JAVA_UTILS;
+  java-set-version 21;
 }
 
 
@@ -491,17 +510,18 @@ function _configure_PATH()
       "${env:AppData}/npm"
     );
 
+    ## mateusdigital
+    $paths += @(
+      "${HOME}/.mateusdigital/bin"
+    );
+
     ## Dots
     $paths += @(
       "${DOTS_BIN_DIR}",
       "${DOTS_BIN_DIR}/dots",
       "${DOTS_BIN_DIR}/dots/win32",
       "${DOTS_BIN_DIR}/dots/win32/ProcessExplorer"
-    );
-
-    ## mateusdigital
-    $paths += @(
-      "${HOME}/.mateusdigital/bin"
+      "${DOTS_BIN_DIR}/dots/win32/gvim_9.1.0_x64_signed/vim/vim91"
     );
 
     ## Java / Android
@@ -626,7 +646,9 @@ function gtk() { gitk --all; }
 
 ## --- NEW BRANCH---------------------------------------------------------------
 function git-branch-new() {
-  if($args.Length -eq 0) {
+  Write-Host "DEBUG: args='$args' Length=$($args.Length)" -ForegroundColor Yellow
+
+  if($args.Length -lt 1) {
     Write-Host "[FATAL] No branch name was given." -ForegroundColor Red;
     return;
   }
@@ -637,13 +659,15 @@ function git-branch-new() {
   git checkout -b "$clean_name";
 }
 
+function git-new-branch() { git-branch-new @args; }
+
 ## -----------------------------------------------------------------------------
-function gn() { git-branch-new $args; }
+function gn() { git-branch-new @args; }
 
 ## --- CHECKOUT ----------------------------------------------------------------
 function git-branch-checkout() {
   $branch_name = "";
-  if($args.Length -eq 0) {
+  if($args.Length -gt 0) {
     $branch_name = $args[0];
   }
 

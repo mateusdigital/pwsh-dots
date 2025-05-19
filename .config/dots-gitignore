@@ -138,6 +138,13 @@ GoogleDrive/
 .wget-hsts
 .yarn/
 java_error_in_studio.hprof
+.config/jgit/
+.lemminx/
+.skiko/
+_viminfo
+vimfiles/
+vscode-remote-wsl/
+
 
 ##
 ## Applications

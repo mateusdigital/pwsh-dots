@@ -22,4 +22,3 @@
 
 ## Source the actual file :)
 . "$HOME/.config/powershell/Microsoft.PowerShell_profile.ps1";
-. 'C:\Users\mateusdigital\Documents\PowerShell/hypejoe-powershell-profile.ps1'

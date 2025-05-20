@@ -307,11 +307,21 @@ function cd($target_path = "")
 ##------------------------------------------------------------------------------
 function ide()
 {
-  $result = (ls @args .sln | peco);
-  if($result.Length -ne 0) {
-    Invoke-Item $result;
-  } else {
-    Write-Output "Ignoring...";
+  $gradle_files = (Get-Item "*gradle*");
+  if($gradle_files -and $gradle_files.Length -ne 0) {
+    & "$env:ANDROID_STUDIO" "./";
+    return;
+  }
+
+  $vs_solutions = fd .sln
+  if ($vs_solutions -and $vs_solutions.Length -ne 0) {
+    $selected_solution = $vs_solutions | peco
+    if ($selected_solution.Length -eq 0) {
+      Write-Host "No solution selected - Aborting..." -ForegroundColor Red
+      return
+    }
+
+    open-item $selected_solution
   }
 }
 
@@ -466,6 +476,7 @@ $env:ANDROID_PATH = "${env:ANDROID_HOME}/cmdline-tools/latest/bin;" `
                   + "${env:ANDROID_HOME}/emulator;"          `
                   + "${env:ANDROID_HOME}/platform-tools;";
 
+$env:ANDROID_STUDIO = "C:\Program Files\Android\Android Studio\bin\studio64.exe";
 
 function android-list-paths() {
   Write-Host "ANDROID_HOME     $env:ANDROID_HOME";

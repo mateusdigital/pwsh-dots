@@ -43,12 +43,12 @@ if (IsPowershellTooOld) {
 
 ## -----------------------------------------------------------------------------
 function UnixSlash() {
-  return $args[0].Replace("\", "/");
+  return $args[0].ToString().Replace("\", "/");
 }
 
 ## -----------------------------------------------------------------------------
 function WinSlash() {
-  return $args[0].Replace("/", "\");
+  return $args[0].ToString().Replace("/", "\");
 
 }
 

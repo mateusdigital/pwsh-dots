@@ -362,6 +362,38 @@ function files()
   & $file_manager $target_path;
 }
 
+## -----------------------------------------------------------------------------
+function ChangeExtension() {
+  param(
+    [string]$SrcGlob,
+    [string]$NewExt,
+    [switch]$Recursive = $false
+  )
+
+  if($SrcGlob.Length -eq 0) {
+    Write-Error "No SrcGlob was given - Aborting...";
+    return;
+  }
+  if($NewExt.Length -eq 0) {
+    Write-Error "No NewExt was given - Aborting...";
+    return;
+  }
+
+  if ($Recursive) {
+    $files = Get-ChildItem -Path $SrcGlob -Recurse
+  } else {
+    $files = Get-ChildItem -Path $SrcGlob
+  }
+
+  foreach ($file in $files) {
+    $new_filename = [System.IO.Path]::ChangeExtension($file.FullName, $NewExt)
+    Write-Output "Renaming $($file.FullName) to $new_filename";
+    Rename-Item -Verbose `
+      -Path $file.FullName `
+      -NewName $new_filename
+  }
+}
+
 ##------------------------------------------------------------------------------
 function go()
 {

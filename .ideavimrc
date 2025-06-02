@@ -1,6 +1,6 @@
 source ~/.vimrc
 echo "Loaded .ideavimrc"
-nnoremap <leader>r :source ~/.ideavimrc<CR>:echo "Reloaded .ideavimrc"<CR>
+nnoremap <leader><F2> :source ~/.ideavimrc<CR>:echo "Reloaded .ideavimrc"<CR>
 
 " ==============================
 " IdeaVim-Specific Options
@@ -11,6 +11,18 @@ set multiple-cursors
 set surround
 set idearefactormode=keep
 set highlightedyank
+
+
+set which-key
+set notimeout
+set timeoutlen=5000
+let g:WhichKey_FontSize = 20
+
+
+nnoremap <C-A-h> :action PreviousTab<CR>
+nnoremap <C-A-l> :action NextTab<CR>
+
+nnoremap <leader>o :action SearchEverywhere<CR>
 
 " ==============================
 " IntelliJ Action Bindings (Optional)

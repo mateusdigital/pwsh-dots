@@ -32,6 +32,7 @@ set visualbell
 set number
 set relativenumber
 set showmode
+set showcmd
 set scrolloff=3
 set linebreak
 set listchars=tab:>-,trail:_
@@ -63,9 +64,7 @@ set textwidth=80
 " NERDTree Settings
 " ==============================
 nnoremap <leader>n :NERDTreeFocus<CR>
-nnoremap <C-n> :NERDTree<CR>
-nnoremap <C-t> :NERDTreeToggle<CR>
-nnoremap <C-f> :NERDTreeFind<CR>
+nnoremap <C-n> :NERDTreeToggle<CR>
 
 autocmd VimEnter * NERDTree | wincmd p
 autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | call feedkeys(":quit\<CR>:\<BS>") | endif
@@ -77,6 +76,7 @@ nnoremap L $
 nnoremap H ^
 vnoremap L $
 vnoremap H ^
+
 
 " ==============================
 " Miscellaneous

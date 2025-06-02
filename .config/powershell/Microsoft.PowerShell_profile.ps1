@@ -559,7 +559,8 @@ function _configure_PATH()
 
     ## mateusdigital
     $paths += @(
-      "${HOME}/.mateusdigital/bin"
+      "${HOME}/.mateusdigital/bin",
+      "${HOME}/.mateusdigital/bin/file-locksmith"
     );
 
     ## Dots

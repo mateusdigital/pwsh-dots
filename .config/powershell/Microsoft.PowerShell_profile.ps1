@@ -810,10 +810,18 @@ function git-ignore()
 ##
 
 ##------------------------------------------------------------------------------
-function copy-clang-format()
+function default-clang-format()
 {
   Copy-Item "${HOME}/.clang-format" "${PWD}/.clang-format";
 }
+
+## -----------------------------------------------------------------------------
+function default-git-ignore()
+{
+  Copy-Item "${HOME}/.gitignore" "${PWD}/.gitignore";
+}
+
+
 
 ##
 ## Dots

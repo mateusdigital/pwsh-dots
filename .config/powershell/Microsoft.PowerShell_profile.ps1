@@ -313,16 +313,18 @@ function ide()
     return;
   }
 
-  $vs_solutions = fd .sln
-  if ($vs_solutions -and $vs_solutions.Length -ne 0) {
-    $selected_solution = $vs_solutions | peco
-    if ($selected_solution.Length -eq 0) {
-      Write-Host "No solution selected - Aborting..." -ForegroundColor Red
-      return
-    }
+  $vs_solutions = fd -e sln -e vcxproj
+  if ($vs_solutions -and $vs_solutions.Count -gt 0) {
+      $selected_solution = $vs_solutions | peco
 
-    open-item $selected_solution
+      if (-not $selected_solution -or $selected_solution.Trim().Length -eq 0) {
+          Write-Host "No solution selected - Aborting..." -ForegroundColor Red
+          return
+      }
+
+      Invoke-Item $selected_solution
   }
+
 }
 
 ##------------------------------------------------------------------------------

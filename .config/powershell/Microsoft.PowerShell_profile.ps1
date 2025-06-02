@@ -510,8 +510,10 @@ $env:ANDROID_PATH = "${env:ANDROID_HOME}/cmdline-tools/latest/bin;" `
                   + "${env:ANDROID_HOME}/emulator;"          `
                   + "${env:ANDROID_HOME}/platform-tools;";
 
-$env:ANDROID_STUDIO = "C:\Program Files\Android\Android Studio\bin\studio64.exe";
+# $env:ANDROID_STUDIO = "C:\Program Files\Android\Android Studio\bin\studio64.exe";
+$env:ANDROID_STUDIO = "D:\Software\android-studio-2024.3.2.14-windows\android-studio\bin\studio64.exe";
 
+## -----------------------------------------------------------------------------
 function android-list-paths() {
   Write-Host "ANDROID_HOME     $env:ANDROID_HOME";
   Write-Host "ANDROID_SDK_ROOT $env:ANDROID_SDK_ROOT";

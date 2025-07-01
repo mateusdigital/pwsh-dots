@@ -192,7 +192,25 @@ function edit-ignore()
 Get-Alias | Where-Object { $_.Options -NE "Constant" } | Remove-Alias -Force;
 Get-Alias | Remove-Alias -Force;
 
+function echo() {
+  if($args.Length -eq 0) {
+    Write-Host "";
+  } else {
+    Write-Host $args;
+  }
+}
 
+function cat() {
+  if($args.Length -eq 0) {
+    Write-Host "";
+  } else {
+    Get-Content $args;
+  }
+}
+
+function mc() {
+  & "C:\Program Files\Midnight Commander\mc.exe" @args;
+}
 ##
 ## Shell
 ##
@@ -233,7 +251,6 @@ function ll() { & "${_CORE_UTILS_DIR}ls" -al @args; }
 function cp() { & "${_CORE_UTILS_DIR}cp" @args; }
 
 
-
 ## Move
 
 ## -----------------------------------------------------------------------------
@@ -241,6 +258,7 @@ if($IsWindows) {
   ## This avoids recursion on the mv function.
   function mv() { & "${_CORE_UTILS_DIR}mv" @args; }
 }
+
 
 ## Remove
 
@@ -362,38 +380,6 @@ function files()
   & $file_manager $target_path;
 }
 
-## -----------------------------------------------------------------------------
-function ChangeExtension() {
-  param(
-    [string]$SrcGlob,
-    [string]$NewExt,
-    [switch]$Recursive = $false
-  )
-
-  if($SrcGlob.Length -eq 0) {
-    Write-Error "No SrcGlob was given - Aborting...";
-    return;
-  }
-  if($NewExt.Length -eq 0) {
-    Write-Error "No NewExt was given - Aborting...";
-    return;
-  }
-
-  if ($Recursive) {
-    $files = Get-ChildItem -Path $SrcGlob -Recurse
-  } else {
-    $files = Get-ChildItem -Path $SrcGlob
-  }
-
-  foreach ($file in $files) {
-    $new_filename = [System.IO.Path]::ChangeExtension($file.FullName, $NewExt)
-    Write-Output "Renaming $($file.FullName) to $new_filename";
-    Rename-Item -Verbose `
-      -Path $file.FullName `
-      -NewName $new_filename
-  }
-}
-
 ##------------------------------------------------------------------------------
 function go()
 {
@@ -430,6 +416,62 @@ function open-item()
     Write-Output "Ignoring...";
   }
 }
+
+
+
+##
+## Free Functions -- These functions are not meant to have the impression
+## that they are commands, but functions that are useful in the shell.
+## That's why they are written with PascalCase instead of shell-program-like
+##   -- @mateusdigital - 2025-06-04
+
+## -----------------------------------------------------------------------------
+function ChangeExtension()
+{
+  param(
+    [string]$SrcGlob,
+    [string]$NewExt,
+    [switch]$Recursive = $false
+  )
+
+  if($SrcGlob.Length -eq 0) {
+    Write-Error "No SrcGlob was given - Aborting...";
+    return;
+  }
+  if($NewExt.Length -eq 0) {
+    Write-Error "No NewExt was given - Aborting...";
+    return;
+  }
+
+  if ($Recursive) {
+    $files = Get-ChildItem -Path $SrcGlob -Recurse;
+  } else {
+    $files = Get-ChildItem -Path $SrcGlob;
+  }
+
+  foreach ($file in $files) {
+    $new_filename = [System.IO.Path]::ChangeExtension($file.FullName, $NewExt);
+
+    Write-Output "Renaming $($file.FullName) to $new_filename";
+    Rename-Item -Verbose      `
+      -Path    $file.FullName `
+      -NewName $new_filename
+  }
+}
+
+## -----------------------------------------------------------------------------
+function EnsurePath()
+{
+  param(
+    [string]$Path
+  )
+
+  if (-not (Test-Path -Path $Path)) {
+    Write-Output "Creating path: $Path";
+    New-Item -ItemType Directory -Path $Path -Force;
+  }
+}
+
 
 
 ##
@@ -503,20 +545,24 @@ function show-wifi-password()
 ##
 
 ## -----------------------------------------------------------------------------
-$env:ANDROID_HOME     = "C:\Users\mateusdigital\AppData\Local\Android\Sdk";
-$env:ANDROID_SDK_ROOT = "C:\Users\mateusdigital\AppData\Local\Android\Sdk";
+$env:ANDROID_ROOT        = "D:/_Installed/Android";
+$env:ANDROID_SDK_ROOT    = "$env:ANDROID_ROOT/Sdk";
+$env:ANDROID_SDK_HOME    = "$env:ANDROID_ROOT/Avd";
+$env:ANDROID_HOME        = "$env:ANDROID_SDK_ROOT";
+$env:ANDROID_STUDIO_PATH = "${env:ANDROID_ROOT}/AndroidStudio/bin";
 
 $env:ANDROID_PATH = "${env:ANDROID_HOME}/cmdline-tools/latest/bin;" `
-                  + "${env:ANDROID_HOME}/emulator;"          `
-                  + "${env:ANDROID_HOME}/platform-tools;";
+                  + "${env:ANDROID_HOME}/emulator;"                 `
+                  + "${env:ANDROID_HOME}/platform-tools;"           `
+                  + "${env:ANDROID_STUDIO_PATH};"                   `
+                  ;
 
-# $env:ANDROID_STUDIO = "C:\Program Files\Android\Android Studio\bin\studio64.exe";
-$env:ANDROID_STUDIO = "D:\Software\android-studio-2024.3.2.14-windows\android-studio\bin\studio64.exe";
+$env:ANDROID_STUDIO      = "${env:ANDROID_STUDIO_PATH}/studio64.exe";
 
 ## -----------------------------------------------------------------------------
 function android-list-paths() {
-  Write-Host "ANDROID_HOME     $env:ANDROID_HOME";
-  Write-Host "ANDROID_SDK_ROOT $env:ANDROID_SDK_ROOT";
+  Write-Host "ANDROID_HOME     " $env:ANDROID_HOME;
+  Write-Host "ANDROID_SDK_ROOT " $env:ANDROID_SDK_ROOT;
   Write-Host "ANDROID_PATH     " (WinSlash $env:ANDROID_PATH).Replace(";","`n");
 }
 
@@ -554,7 +600,10 @@ function _configure_PATH()
     ## Programs
     $paths = @(
       "C:/Program Files/nodejs",
-      "${env:AppData}/npm"
+      "${env:AppData}/npm",
+      ## Ghostscript
+      "D:/_Installed/GraphicsMagick-1.3.45-Q16/",
+      "D:/_Installed/gs9.52/bin"
     );
 
     ## mateusdigital
@@ -579,7 +628,7 @@ function _configure_PATH()
         "${env:JAVA_HOME}/bin"
       );
 
-      "${env:ANDROID_PATH}"
+      $paths += "${env:ANDROID_PATH}";
     }
 
     ## Coreutils
@@ -630,7 +679,7 @@ function _configure_PATH()
 ##------------------------------------------------------------------------------
 function path-list()
 {
-  Write-Output "Current PATH: "
+  Write-Output "Current PATH: ";
 
   $path_separator_char = ":";
   if($isWindows) {
@@ -639,6 +688,30 @@ function path-list()
 
   foreach ($item in ${env:PATH}.Split($path_separator_char)) {
     Write-Output "  $item";
+  }
+}
+
+function path-check-valid-directories()
+{
+  $path_separator_char = ":";
+  if($isWindows) {
+    $path_separator_char = ";";
+  }
+
+  $invalid_paths = @();
+  foreach ($item in ${env:PATH}.Split($path_separator_char)) {
+    if (-not (Test-Path -Path $item -PathType Container)) {
+      $invalid_paths += $item;
+    }
+  }
+
+  if ($invalid_paths.Count -gt 0) {
+    Write-Host "Invalid paths found in PATH:" -ForegroundColor Red;
+    foreach ($invalid_path in $invalid_paths) {
+      Write-Host "  $invalid_path" -ForegroundColor Yellow;
+    }
+  } else {
+    Write-Host "All paths in PATH are valid." -ForegroundColor Green;
   }
 }
 
@@ -653,10 +726,12 @@ $env:PATH         = (_configure_PATH);
 ## Git-Functions
 ##
 
-##------------------------------------------------------------------------------
+## --- Git ---------------------------------------------------------------------
 function g()  { git        $args; }
 function gs() { git status $args; }
 
+
+## --- Aliases -----------------------------------------------------------------
 function galiases() {
   $values = (git config --get-regexp ^alias\.);
   foreach($value in $values) {
@@ -667,6 +742,7 @@ function galiases() {
 
 function galias() { galiases $args; }
 
+## --- Authors ------------------------------------------------------------------
 function gauthors()
 {
   git log --format='%an'          | `
@@ -675,22 +751,30 @@ function gauthors()
     ForEach-Object { "$($_.Name): $($_.Count)" }
 }
 
+## --- Size --------------------------------------------------------------------
+function gsize() { git count-objects -vH; }
+
+
 ## --- LOG ---------------------------------------------------------------------
 function gl() { git log    $args; }
 function glog() { git log --decorate --oneline --graph --all   $args; }
+
 
 ## --- PUSH --------------------------------------------------------------------
 function gp()    { git push $args; }
 function gpush() { git push $args; }
 function gpull() { git pull $args; }
 
+
 ## --- RESET -------------------------------------------------------------------
 function greset() { git reset --hard; }
+
 
 ## --- GUI ---------------------------------------------------------------------
 function gg()  { git gui $args; }
 function gui()  { gitui $args; }
 function gtk() { gitk --all; }
+
 
 ## --- NEW BRANCH---------------------------------------------------------------
 function git-branch-new() {
@@ -708,8 +792,6 @@ function git-branch-new() {
 }
 
 function git-new-branch() { git-branch-new @args; }
-
-## -----------------------------------------------------------------------------
 function gn() { git-branch-new @args; }
 
 ## --- CHECKOUT ----------------------------------------------------------------
@@ -940,7 +1022,8 @@ function __update_ps1_git
     $is_dirty = (git status --porcelain);
 
     if ($is_dirty) {
-      $git_branch += "*";
+      $count = $is_dirty.Count;
+      $git_branch += "* ($count)";
     }
 
     $branch = (git rev-parse --abbrev-ref HEAD)

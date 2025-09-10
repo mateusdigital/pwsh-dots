@@ -7,35 +7,29 @@
 *private*
 .bashrc_private
 
-Google_Drive/
-GoogleDrive/
-IdeaProjects/
 
-joplin_crash*
-
-
-##
-## Local
 ##------------------------------------------------------------------------------
-
-##
-## Config
-##------------------------------------------------------------------------------
+_viminfo
+.agent
 .android/
 .bash_history
 .bash_logout
 .bash_logout
 .bash_profile
+.bash_profile.bak
 .bash_sessions/
 .bash_sessions/*
 .bashdb_hist
 .bin/_repochecker.py
+.bin/dots/macos/defaults.sh
+.bin/dots/macos/mac-sane-defaults.sh
 .bin/dots/win32/_portable/
 .bin/repochecker.ps1
 .cache/
 .cargo/
 .CFUserTextEncoding
 .cisco/
+.codex/
 .config/.dots_gitignore
 .config/.gsd-keyboard*
 .config/alacritty/
@@ -51,6 +45,7 @@ joplin_crash*
 .config/evolution/
 .config/gatsby/
 .config/GIMP/
+.config/github-copilot/
 .config/gitui/
 .config/gnome-initial-setup-done
 .config/godot/
@@ -62,6 +57,8 @@ joplin_crash*
 .config/ibus/
 .config/input-remapper/
 .config/JetBrains/
+.config/jgit/
+.config/joplin-desktop/
 .config/karabiner/
 .config/karabiner/automatic_backups/
 .config/kde.org/*
@@ -101,9 +98,12 @@ joplin_crash*
 .gnome/
 .gnupg/
 .gradle/
+.helper
+.id
 .java/
 .konan/
 .l7tech/
+.lemminx/
 .lesshst
 .lib/
 .librarymanager/
@@ -120,17 +120,28 @@ joplin_crash*
 .nuget/
 .nvm/
 .openshot_qt/
+.p4enviro
+.p4merge/
+.p4qt/
+.p4tickets
+.p4trust
+.pass
+.pkg-cache/
 .pwsh-history.txt
 .rest-client/
 .sane/xsane/*
 .scrap_files/
 .shellcheckrc
+.skiko/
 .ssh/
 .sudo_as_admin_successful
+.swiftpm/
 .swt/
 .templateengine/
 .terminfo/*
 .th-client/
+.thumbnails/
+.username
 .vagrant.d/
 .vagrant/**/.vagrant
 .vifm/*
@@ -143,64 +154,49 @@ joplin_crash*
 .vscode/
 .wget-hsts
 .yarn/
-java_error_in_studio.hprof
-.config/jgit/
-.p4merge/
-.thumbnails/
-.lemminx/
-.skiko/
-_viminfo
-vimfiles/
-vscode-remote-wsl/
+.zprofile
+.zsh_sessions/
 
-
-##
-## Applications
-##
-
-## --- Joplin ----------------------------------------------------------------
-.config/joplin-desktop/
-JoplinBackup/
-## --- Perforce ----------------------------------------------------------------
-.p4qt/
-.pkg-cache/
-p4tickets.txt
-p4trust.txt
-
-
-Applications/
-IntelGraphicsProfiles/
-Library/
-Movies/
-npm-cache/
-Public/
-scoop/
-coc/
-git/
-Nuget/
-NuGet/
-yarn/
-procps/
-nvim/plugin/
-fzf/*.bash
-fzf/*.fish
-
-##
-## Folders
-##------------------------------------------------------------------------------
-## General
+## -----------------------------------------------------------------------------
+AndroidStudioProjects/
 AppData/
 Applications/
+Applications/
+coc/
 Desktop/
 Documents/
 Downloads/
+fzf/*.bash
+fzf/*.fish
+git/
+Google_Drive/
+GoogleDrive/
+IdeaProjects/
+IntelGraphicsProfiles/
+java_error_in_studio.hprof
+joplin_crash*
+JoplinBackup/
+Library/
 Library/
 Movies/
+Movies/
 Music/
+npm-cache/
+Nuget/
+NuGet/
+nvim/plugin/
+p4tickets.txt
+p4trust.txt
 Pictures/
+procps/
 Public/
+Public/
+scoop/
 Videos/
+vimfiles/
 VirtualBox*/
+vscode-remote-wsl/
+yarn/
 
 ##
 ## SSH folders

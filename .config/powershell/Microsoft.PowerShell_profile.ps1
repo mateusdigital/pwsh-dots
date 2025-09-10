@@ -1,4 +1,4 @@
-##--------------------------------------------------------------------------##
+##----------------------------------------------------------------------------##
 ##                               *       +                                    ##
 ##                         '                  |                               ##
 ##                     ()    .-.,="``"=.    - o -                             ##
@@ -49,9 +49,33 @@ function UnixSlash() {
 ## -----------------------------------------------------------------------------
 function WinSlash() {
   return $args[0].ToString().Replace("/", "\");
-
 }
 
+## -----------------------------------------------------------------------------
+function PlatformSlash() {
+  if($IsWindows) {
+    return WinSlash $args[0];
+  }
+  return UnixSlash $args[0];
+}
+
+## -----------------------------------------------------------------------------
+function WinPATHSeparator() {
+  return ";";
+}
+
+## -----------------------------------------------------------------------------
+function UnixPATHSeparator() {
+  return ":";
+}
+
+## -----------------------------------------------------------------------------
+function PlatformPATHSeparator() {
+  if($IsWindows) {
+    return WinPATHSeparator;
+  }
+  return UnixPATHSeparator;
+}
 
 ##
 ## Environment Vars.
@@ -64,7 +88,6 @@ $env:DOTS_IS_VERBOSE             = 0; ## We dont' want a talkative dots.
 ##------------------------------------------------------------------------------
 $env:EDITOR = "code";
 $env:VISUAL = "code";
-
 
 ##
 ## Important directories
@@ -92,6 +115,11 @@ if($IsWindows) {
   $_DIFF_UTILS_DIR = "${DOTS_BIN_DIR}/dots/win32/diffutils-2.8.7-1-bin/bin/";
 }
 
+if($IsMacOS) {
+  function python() {
+    & "python3" @args;
+  }
+}
 ##
 ## WSL
 ##
@@ -113,6 +141,11 @@ function IsWSL()
 ## -----------------------------------------------------------------------------
 function devshell()
 {
+  if(-not $IsWindows) {
+    Write-Error "This function is only available on Windows.";
+    return;
+  }
+
   $vs_install_path = (vswhere -latest -property installationPath)
   if (-not $vs_install_path) {
       Write-Error "Visual Studio not found!" -ForegroundColor Red;
@@ -137,6 +170,7 @@ function edit-profile()
     ;
 }
 
+## -----------------------------------------------------------------------------
 function edit-git()
 {
 
@@ -192,6 +226,8 @@ function edit-ignore()
 Get-Alias | Where-Object { $_.Options -NE "Constant" } | Remove-Alias -Force;
 Get-Alias | Remove-Alias -Force;
 
+
+## ------------------------------------------------------------------------------
 function echo() {
   if($args.Length -eq 0) {
     Write-Host "";
@@ -200,6 +236,7 @@ function echo() {
   }
 }
 
+## ------------------------------------------------------------------------------
 function cat() {
   if($args.Length -eq 0) {
     Write-Host "";
@@ -208,9 +245,7 @@ function cat() {
   }
 }
 
-function mc() {
-  & "C:\Program Files\Midnight Commander\mc.exe" @args;
-}
+
 ##
 ## Shell
 ##
@@ -325,6 +360,8 @@ function cd($target_path = "")
 ##------------------------------------------------------------------------------
 function ide()
 {
+
+  ## !TODO: Implement for mac....
   $gradle_files = (Get-Item "*gradle*");
   if($gradle_files -and $gradle_files.Length -ne 0) {
     & "$env:ANDROID_STUDIO" "./";
@@ -384,12 +421,13 @@ function files()
 function go()
 {
   if($args.Length -eq 0) {
-    $result = (gosh -l | peco);
+    $result = (gosh -L | peco);
   } else {
-    $result = (gosh -l | peco --query $args);
+    $result = (gosh -L | peco --query $args);
   }
 
   if($result.Length -ne 0) {
+    $path = $result.split(":")[0].Trim();
     gosh "$result";
   }
 }
@@ -545,25 +583,38 @@ function show-wifi-password()
 ##
 
 ## -----------------------------------------------------------------------------
-$env:ANDROID_ROOT        = "D:/_Installed/Android";
+## !TODO: Make this works on mac as well...
+$sep = PlatformPATHSeparator
+if($IsWindows)
+{
+  $env:ANDROID_ROOT        = "D:/_Installed/Android";
+  $env:ANDROID_STUDIO_PATH = "${env:ANDROID_ROOT}/AndroidStudio/bin";
+  $env:ANDROID_STUDIO      = "${env:ANDROID_STUDIO_PATH}/studio64.exe";
+}
+
+elseif($IsMacOS)
+{
+  $env:ANDROID_ROOT        = "${HOME}/Library/Android";
+  $env:ANDROID_STUDIO_PATH = "/Applications/Android Studio.app/Contents/MacOS";
+  $env:ANDROID_STUDIO      = "${env:ANDROID_STUDIO_PATH}/studio";
+}
+
 $env:ANDROID_SDK_ROOT    = "$env:ANDROID_ROOT/Sdk";
 $env:ANDROID_SDK_HOME    = "$env:ANDROID_ROOT/Avd";
 $env:ANDROID_HOME        = "$env:ANDROID_SDK_ROOT";
-$env:ANDROID_STUDIO_PATH = "${env:ANDROID_ROOT}/AndroidStudio/bin";
 
-$env:ANDROID_PATH = "${env:ANDROID_HOME}/cmdline-tools/latest/bin;" `
-                  + "${env:ANDROID_HOME}/emulator;"                 `
-                  + "${env:ANDROID_HOME}/platform-tools;"           `
-                  + "${env:ANDROID_STUDIO_PATH};"                   `
+$env:ANDROID_PATH = "${env:ANDROID_HOME}/cmdline-tools/latest/bin$sep" `
+                  + "${env:ANDROID_HOME}/emulator$sep"                 `
+                  + "${env:ANDROID_HOME}/platform-tools$sep"           `
+                  + "${env:ANDROID_STUDIO_PATH}$sep"                   `
                   ;
 
-$env:ANDROID_STUDIO      = "${env:ANDROID_STUDIO_PATH}/studio64.exe";
 
 ## -----------------------------------------------------------------------------
 function android-list-paths() {
   Write-Host "ANDROID_HOME     " $env:ANDROID_HOME;
   Write-Host "ANDROID_SDK_ROOT " $env:ANDROID_SDK_ROOT;
-  Write-Host "ANDROID_PATH     " (WinSlash $env:ANDROID_PATH).Replace(";","`n");
+  Write-Host "ANDROID_PATH     " (PlatformSlash $env:ANDROID_PATH).Replace(";","`n");
 }
 
 ##
@@ -595,6 +646,12 @@ function _get_default_PATH()
 ##------------------------------------------------------------------------------
 function _configure_PATH()
 {
+  $env:PNG_EDITOR = "";
+  $env:PSD_EDITOR = "";
+  $env:WAV_EDITOR = "audacity";
+  $env:MP3_EDITOR = "audacity";
+
+
   ##
   if($IsWindows) {
     ## Programs
@@ -604,8 +661,8 @@ function _configure_PATH()
       ## Ghostscript
       "D:/_Installed/GraphicsMagick-1.3.45-Q16/",
       "D:/_Installed/gs9.52/bin"
-    );
 
+    );
     ## mateusdigital
     $paths += @(
       "${HOME}/.mateusdigital/bin",
@@ -664,6 +721,8 @@ function _configure_PATH()
       ## Rest
       "${env:PATH_DEFAULT}"
     );
+
+    $paths += "${env:ANDROID_PATH}";
   }
 
   ##
@@ -691,6 +750,7 @@ function path-list()
   }
 }
 
+##------------------------------------------------------------------------------
 function path-check-valid-directories()
 {
   $path_separator_char = ":";
@@ -897,13 +957,13 @@ function git-ignore()
 ##------------------------------------------------------------------------------
 function default-clang-format()
 {
-  Copy-Item "${HOME}/.clang-format" "${PWD}/.clang-format";
+  Copy-Item "${HOME}/.clang-format" "${PWD}/.clang-format" -Verbose;
 }
 
 ## -----------------------------------------------------------------------------
 function default-git-ignore()
 {
-  Copy-Item "${HOME}/.gitignore" "${PWD}/.gitignore";
+  Copy-Item "${HOME}/.gitignore" "${PWD}/.gitignore" -Verbose;
 }
 
 
@@ -1067,8 +1127,12 @@ function _update_prompt()
   $smile_face = if ($last_cmd_sucessfull) { ":)" }else { ":(" }
 
   ## Make the $HOME be just "~".
-  if ($location.Path -like "$env:USERPROFILE*") {
-    $subpath = $location.Path.Substring($env:USERPROFILE.Length);
+  $user_home = $HOME;
+  if ($user_home -eq $null) {
+    $user_home = [System.Environment]::GetFolderPath("UserProfile");
+  }
+  if ($location.Path -like "$user_home*") {
+    $subpath = $location.Path.Substring($user_home.Length);
     $location = "~${subpath}";
   }
 

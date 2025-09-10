@@ -1,6 +1,63 @@
 source ~/.vimrc
 echo "Loaded .ideavimrc"
-nnoremap <leader><F2> :source ~/.ideavimrc<CR>:echo "Reloaded .ideavimrc"<CR>
+
+" ==============================
+" Leader Key
+" ==============================
+let mapleader = " "
+
+" ==============================
+" General Vim Settings
+" ==============================
+syntax on
+filetype on
+filetype plugin on
+filetype indent on
+
+set modeline
+set modelines=2
+set backspace=indent,eol,start
+set visualbell
+
+" ==============================
+" Display Settings
+" ==============================
+set number
+set relativenumber
+set showmode
+set showcmd
+set scrolloff=3
+set linebreak
+set listchars=tab:>-,trail:_
+set list
+
+" ==============================
+" Indentation and Tabs
+" ==============================
+set tabstop=2
+set shiftwidth=2
+set expandtab
+set smartindent
+
+" ==============================
+" Search
+" ==============================
+set incsearch
+set ignorecase
+set smartcase
+set hlsearch
+
+" ==============================
+" Clipboard and Text Behavior
+" ==============================
+set clipboard=unnamedplus
+set textwidth=80
+
+" ==============================
+" Miscellaneous
+" ==============================
+" Select all
+nnoremap <C-A> gg<S-v>G
 
 " ==============================
 " IdeaVim-Specific Options
@@ -12,16 +69,37 @@ set surround
 set idearefactormode=keep
 set highlightedyank
 
-
 set which-key
 set notimeout
 set timeoutlen=5000
 let g:WhichKey_FontSize = 20
 
+" ==============================
+" Cross-platform mappings
+" ==============================
+" Core (Alt) mappings
+ " { "key": "f3", "command": "openInExternalApp.open" },
+ " { "key": "shift+cmd+r", "command": "revealFileInOS", },
+ " { "key": "shift+cmd+c", "command": "copyFilePath" },
+ " { "key": "shift+cmd+t", "command": "workbench.action.createTerminalEditor" },
+if has("macunix")
+nnoremap <F3>    :action OpenInAssociatedApplication<CR>
+nnoremap <D-S-r> :action revealFileInOS<CR>
+nnoremap <C-S-p> :action GotoAction<CR>
 
-nnoremap <C-A-h> :action PreviousTab<CR>
-nnoremap <C-A-l> :action NextTab<CR>
+nnoremap <C-k><C-o> :action CIDR.Lang.SwitchHeaderSource<CR>
+nnoremap <C+[><C-s> :action SelectInProjectView<CR>
 
+" macOS shim — mirror Alt mappings to Cmd (⌘)
+nnoremap <C-D-h> :action PreviousTab<CR>
+nnoremap <C-D-l> :action NextTab<CR>
+nnoremap <C-D-o> :action SearchEverywhere<CR>
+nnoremap <A-S-f> :action ReformatCode<CR>
+endif
+
+" ==============================
+" Leader mappings
+" ==============================
 nnoremap <leader>o :action SearchEverywhere<CR>
 
 " ==============================
@@ -29,8 +107,6 @@ nnoremap <leader>o :action SearchEverywhere<CR>
 " ==============================
 " nnoremap <leader>sv :action SplitVertically<CR>
 " nnoremap <leader>sc :action UnsplitAll<CR>
-" nmap <leader>h :action PreviousTab<CR>
-" nmap <leader>l :action NextTab<CR>
 " nnoremap <leader>gf :action GotoFile<CR>
 " nnoremap <leader>gc :action GotoClass<CR>
 " nnoremap <leader>gt :action GotoTest<CR>

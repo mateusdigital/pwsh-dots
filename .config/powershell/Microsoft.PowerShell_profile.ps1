@@ -20,6 +20,17 @@
 ##    Dot files for windows machines.                                         ##
 ##---------------------------------------------------------------------------~##
 
+function mkbak()
+{
+  foreach ($arg in $args) {
+    if (Test-Path $arg) {
+      Copy-Item -Path $arg -Destination "$arg.bak" -Force;
+      Write-Host "Created backup: $arg.bak" -ForegroundColor Green;
+    } else {
+      Write-Host "File not found: $arg" -ForegroundColor Red;
+    }
+  }
+}
 
 ##
 ## Check if Powershell is the pwsh 7+ version.

@@ -1066,8 +1066,18 @@ function __update_ps1_ip_address
     $ip = (ip addr show | grep -E 'inet [0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | grep -v '127.0.0.1' | awk '{print $2}' | cut -f1 -d'/');
   }
   else {
-    ## @todo(md): Add support for non windows...
-    $ip = "[unknown]";
+    $ip = (ifconfig                             |
+        Select-String "inet "                   |
+        ForEach-Object { ($_ -split "\s+")[2] } |
+        Where-Object { $_ -ne "127.0.0.1" }
+    );
+
+    $split = $ip.split("`n");
+    if($split.Length -gt 0) {
+      $ip = $split[0] + "*";
+    } else {
+      $ip = "$ip";
+    }
   }
   return "$ip";
 }

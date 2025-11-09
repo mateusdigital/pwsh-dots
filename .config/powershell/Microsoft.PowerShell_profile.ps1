@@ -20,6 +20,19 @@
 ##    Dot files for windows machines.                                         ##
 ##---------------------------------------------------------------------------~##
 
+function touch()
+{
+  foreach ($arg in $args) {
+    if (Test-Path $arg) {
+      Set-ItemProperty -Path $arg -Name LastWriteTime -Value (Get-Date);
+      Write-Host "Updated timestamp: $arg" -ForegroundColor Green;
+    } else {
+      New-Item -Path $arg -ItemType File -Force;
+      Write-Host "Created file: $arg" -ForegroundColor Green;
+    }
+  }
+}
+
 function mkbak()
 {
   foreach ($arg in $args) {

@@ -1,4 +1,4 @@
-source ~/.vimrc
+" source ~/.vimrc
 echo "Loaded .ideavimrc"
 
 " ==============================
@@ -23,7 +23,6 @@ set visualbell
 " Display Settings
 " ==============================
 set number
-set relativenumber
 set showmode
 set showcmd
 set scrolloff=3

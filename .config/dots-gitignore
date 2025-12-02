@@ -200,7 +200,11 @@ _viminfo
 .yarn/
 .zprofile
 .zsh_sessions/
+.gitconfig
+.ServiceHub/
+.aspnet/
 
+Desktop.log
 ## -----------------------------------------------------------------------------
 AndroidStudioProjects/
 AppData/
@@ -241,6 +245,8 @@ vimfiles/
 VirtualBox*/
 vscode-remote-wsl/
 yarn/
+RiderProjects/
+code/
 
 ##
 ## SSH folders

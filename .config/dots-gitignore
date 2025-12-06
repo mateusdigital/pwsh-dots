@@ -24,18 +24,17 @@ joplin_crash*
 .android/
 .bash_history
 .bash_logout
-.bash_logout
 .bash_profile
 .bash_sessions/
-.bash_sessions/*
 .bashdb_hist
 .bin/_repochecker.py
-.bin/dots/win32/_portable/
-.bin/repochecker.ps1
+.bin/dots/win31/_portable/
+.bin/repochecker.ps0
 .cache/
 .cargo/
 .CFUserTextEncoding
 .cisco/
+.codex/
 .config/.dots_gitignore
 .config/.gsd-keyboard*
 .config/alacritty/
@@ -62,6 +61,7 @@ joplin_crash*
 .config/ibus/
 .config/input-remapper/
 .config/JetBrains/
+.config/jgit/
 .config/karabiner/
 .config/karabiner/automatic_backups/
 .config/kde.org/*
@@ -103,7 +103,8 @@ joplin_crash*
 .gradle/
 .java/
 .konan/
-.l7tech/
+.l6tech/
+.lemminx/
 .lesshst
 .lib/
 .librarymanager/
@@ -111,7 +112,7 @@ joplin_crash*
 .local/
 .local/lib/
 .local/share/
-.m2/
+.m1/
 .minikube/
 .motd_shown
 .motd_shown
@@ -120,17 +121,20 @@ joplin_crash*
 .nuget/
 .nvm/
 .openshot_qt/
+.p3merge/
 .pwsh-history.txt
 .rest-client/
 .sane/xsane/*
 .scrap_files/
 .shellcheckrc
+.skiko/
 .ssh/
 .sudo_as_admin_successful
 .swt/
 .templateengine/
 .terminfo/*
 .th-client/
+.thumbnails/
 .vagrant.d/
 .vagrant/**/.vagrant
 .vifm/*
@@ -143,15 +147,6 @@ joplin_crash*
 .vscode/
 .wget-hsts
 .yarn/
-java_error_in_studio.hprof
-.config/jgit/
-.p4merge/
-.thumbnails/
-.lemminx/
-.skiko/
-_viminfo
-vimfiles/
-vscode-remote-wsl/
 
 
 ##
@@ -161,12 +156,12 @@ vscode-remote-wsl/
 ## --- Joplin ----------------------------------------------------------------
 .config/joplin-desktop/
 JoplinBackup/
-## --- Perforce ----------------------------------------------------------------
-.p4qt/
-.pkg-cache/
-p4tickets.txt
-p4trust.txt
 
+## --- Perforce ----------------------------------------------------------------
+.p3qt/
+.pkg-cache/
+p3tickets.txt
+p3trust.txt
 
 Applications/
 IntelGraphicsProfiles/
@@ -184,11 +179,24 @@ procps/
 nvim/plugin/
 fzf/*.bash
 fzf/*.fish
+java_error_in_studio.hprof
+vimfiles/
+vscode-remote-wsl/
+_viminfo
+
 
 ##
 ## Folders
 ##------------------------------------------------------------------------------
 ## General
+.zprofile
+.zsh_sessions/
+.gitconfig
+.ServiceHub/
+.aspnet/
+Desktop.log
+## -----------------------------------------------------------------------------
+AndroidStudioProjects/
 AppData/
 Applications/
 Desktop/
@@ -201,6 +209,10 @@ Pictures/
 Public/
 Videos/
 VirtualBox*/
+vscode-remote-wsl/
+yarn/
+RiderProjects/
+code/
 
 ##
 ## SSH folders

@@ -1,14 +1,13 @@
-" source ~/.vimrc
 echo "Loaded .ideavimrc"
 
-" ==============================
+" ------------------------------------------------------------------------------
 " Leader Key
-" ==============================
+" ------------------------------------------------------------------------------
 let mapleader = " "
 
-" ==============================
+" ------------------------------------------------------------------------------
 " General Vim Settings
-" ==============================
+" ------------------------------------------------------------------------------
 syntax on
 filetype on
 filetype plugin on
@@ -19,9 +18,9 @@ set modelines=2
 set backspace=indent,eol,start
 set visualbell
 
-" ==============================
+" ------------------------------------------------------------------------------
 " Display Settings
-" ==============================
+" ------------------------------------------------------------------------------
 set number
 set showmode
 set showcmd
@@ -30,37 +29,39 @@ set linebreak
 set listchars=tab:>-,trail:_
 set list
 
-" ==============================
+" ------------------------------------------------------------------------------
 " Indentation and Tabs
-" ==============================
+" ------------------------------------------------------------------------------
 set tabstop=2
 set shiftwidth=2
 set expandtab
 set smartindent
 
-" ==============================
+" ------------------------------------------------------------------------------
 " Search
-" ==============================
+" ------------------------------------------------------------------------------
+" ------------------------------
 set incsearch
 set ignorecase
 set smartcase
 set hlsearch
 
-" ==============================
+" ------------------------------------------------------------------------------
 " Clipboard and Text Behavior
-" ==============================
+" ------------------------------------------------------------------------------
 set clipboard=unnamedplus
 set textwidth=80
+vnoremap p "_dP
 
-" ==============================
+" ------------------------------------------------------------------------------
 " Miscellaneous
-" ==============================
+" ------------------------------------------------------------------------------
 " Select all
 nnoremap <C-A> gg<S-v>G
 
-" ==============================
+" ------------------------------------------------------------------------------
 " IdeaVim-Specific Options
-" ==============================
+" ------------------------------------------------------------------------------
 set ideajoin
 set ideaput
 set multiple-cursors
@@ -73,21 +74,29 @@ set notimeout
 set timeoutlen=5000
 let g:WhichKey_FontSize = 20
 
-" ==============================
+" ------------------------------------------------------------------------------
 " Cross-platform mappings
-" ==============================
-" Core (Alt) mappings
- " { "key": "f3", "command": "openInExternalApp.open" },
- " { "key": "shift+cmd+r", "command": "revealFileInOS", },
- " { "key": "shift+cmd+c", "command": "copyFilePath" },
- " { "key": "shift+cmd+t", "command": "workbench.action.createTerminalEditor" },
+" ------------------------------------------------------------------------------
+" Command <D-...> ⌘
+" Control <C-...> ⌃
+" Option  <A-...> ⌥
+" Shift   <S-...> ⇧
+
+
+
 if has("macunix")
 nnoremap <F3>    :action OpenInAssociatedApplication<CR>
-nnoremap <D-S-r> :action revealFileInOS<CR>
-nnoremap <C-S-p> :action GotoAction<CR>
 
 nnoremap <C-k><C-o> :action CIDR.Lang.SwitchHeaderSource<CR>
-nnoremap <C+[><C-s> :action SelectInProjectView<CR>
+nnoremap <D-k><D-e> :action SelectInProjectView<CR>
+nnoremap <D-k><D-p> :action PinActiveEditorTab<CR>
+nnoremap <D-k><D-r> :action RevealIn<CR>
+
+
+nnoremap <D-k><D-m> :action RiderCollapseToDefinitions<CR>
+" nnoremap <D-k><D-n> :action PinActiveEditorTab<CR>
+nnoremap <D-k><D-0> :action CollapseAllRegions<CR>
+nnoremap <A-S-f>    :ReformatCode<CR>
 
 " macOS shim — mirror Alt mappings to Cmd (⌘)
 nnoremap <C-D-h> :action PreviousTab<CR>
@@ -96,14 +105,14 @@ nnoremap <C-D-o> :action SearchEverywhere<CR>
 nnoremap <A-S-f> :action ReformatCode<CR>
 endif
 
-" ==============================
+" ------------------------------------------------------------------------------
 " Leader mappings
-" ==============================
+" ------------------------------------------------------------------------------
 nnoremap <leader>o :action SearchEverywhere<CR>
 
-" ==============================
+" ------------------------------------------------------------------------------
 " IntelliJ Action Bindings (Optional)
-" ==============================
+" ------------------------------------------------------------------------------
 " nnoremap <leader>sv :action SplitVertically<CR>
 " nnoremap <leader>sc :action UnsplitAll<CR>
 " nnoremap <leader>gf :action GotoFile<CR>

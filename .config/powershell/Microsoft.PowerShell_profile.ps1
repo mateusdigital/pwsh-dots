@@ -972,6 +972,16 @@ function git-ignore()
   Write-Output $response | Out-File -Append .gitignore;
 }
 
+function git-ignore-common {
+    $picked = "c++,csharp,python,node,java,visualstudio,visualstudiocode,windows,macos,linux,godot,unrealengine,unity,android,androidstudio,rider,jetbrains"
+    $uri = "https://www.toptal.com/developers/gitignore/api/$picked"
+
+    $response = Invoke-WebRequest -Uri $uri
+    echo $response.Content
+    $response.Content | Out-File .gitignore
+
+    curl $uri;
+}
 
 
 ##

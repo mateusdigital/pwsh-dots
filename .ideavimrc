@@ -69,6 +69,7 @@ set surround
 set idearefactormode=keep
 set highlightedyank
 
+
 set which-key
 set notimeout
 set timeoutlen=5000
@@ -115,6 +116,8 @@ nnoremap <leader>o :action SearchEverywhere<CR>
 " ------------------------------------------------------------------------------
 " nnoremap <leader>sv :action SplitVertically<CR>
 " nnoremap <leader>sc :action UnsplitAll<CR>
+" nmap <leader>h :action PreviousTab<CR>
+" nmap <leader>l :action NextTab<CR>
 " nnoremap <leader>gf :action GotoFile<CR>
 " nnoremap <leader>gc :action GotoClass<CR>
 " nnoremap <leader>gt :action GotoTest<CR>

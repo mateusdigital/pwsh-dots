@@ -1,4 +1,4 @@
-echo "Loaded .ideavimrc"
+silent! echom "Loaded .ideavimrc"
 
 " ------------------------------------------------------------------------------
 " Leader Key
@@ -8,8 +8,8 @@ let mapleader = " "
 " ------------------------------------------------------------------------------
 " General Vim Settings
 " ------------------------------------------------------------------------------
-syntax on
-filetype on
+syntax          on
+filetype        on
 filetype plugin on
 filetype indent on
 
@@ -37,10 +37,10 @@ set shiftwidth=2
 set expandtab
 set smartindent
 
+
 " ------------------------------------------------------------------------------
 " Search
 " ------------------------------------------------------------------------------
-" ------------------------------
 set incsearch
 set ignorecase
 set smartcase
@@ -51,13 +51,26 @@ set hlsearch
 " ------------------------------------------------------------------------------
 set clipboard=unnamedplus
 set textwidth=80
-vnoremap p "_dP
+vnoremap p "_dP    ; NOT COPY THE TEXT BELLOW THE PASTED...
+
 
 " ------------------------------------------------------------------------------
 " Miscellaneous
 " ------------------------------------------------------------------------------
-" Select all
-nnoremap <C-A> gg<S-v>G
+if has("macunix")
+    " SELECT ALL with CMD + A
+    nnoremap <D-A> gg<S-v>G
+    " SAVE FILE 
+    nnoremap <D-S> :action SaveDocument<CR> 
+else
+    " SELECT ALL with CTRL + A
+    nnoremap <C-A> gg<S-v>G  
+    nnoremap <A-A> gg<S-v>G  
+
+    " SAVE FILE 
+    nnoremap <C-S> :action SaveDocument<CR>
+    nnoremap <A-S> :action SaveDocument<CR>
+endif
 
 " ------------------------------------------------------------------------------
 " IdeaVim-Specific Options
@@ -68,43 +81,57 @@ set multiple-cursors
 set surround
 set idearefactormode=keep
 set highlightedyank
-
-
-set which-key
 set notimeout
 set timeoutlen=5000
-let g:WhichKey_FontSize = 20
-
-" ------------------------------------------------------------------------------
-" Cross-platform mappings
-" ------------------------------------------------------------------------------
-" Command <D-...> ⌘
-" Control <C-...> ⌃
-" Option  <A-...> ⌥
-" Shift   <S-...> ⇧
 
 
-
+" ------------------------------------------------------------
+" TAB NAVIGATION
+" macOS: Cmd + H / Cmd + L
+" Windows: Alt + H / Alt + L (same physical position as Cmd)
+" ------------------------------------------------------------
 if has("macunix")
-nnoremap <F3>    :action OpenInAssociatedApplication<CR>
-
-nnoremap <C-k><C-o> :action CIDR.Lang.SwitchHeaderSource<CR>
-nnoremap <D-k><D-e> :action SelectInProjectView<CR>
-nnoremap <D-k><D-p> :action PinActiveEditorTab<CR>
-nnoremap <D-k><D-r> :action RevealIn<CR>
-
-
-nnoremap <D-k><D-m> :action RiderCollapseToDefinitions<CR>
-" nnoremap <D-k><D-n> :action PinActiveEditorTab<CR>
-nnoremap <D-k><D-0> :action CollapseAllRegions<CR>
-nnoremap <A-S-f>    :ReformatCode<CR>
-
-" macOS shim — mirror Alt mappings to Cmd (⌘)
-nnoremap <C-D-h> :action PreviousTab<CR>
-nnoremap <C-D-l> :action NextTab<CR>
-nnoremap <C-D-o> :action SearchEverywhere<CR>
-nnoremap <A-S-f> :action ReformatCode<CR>
+  nnoremap <C-D-h> :action PreviousTab<CR>
+  nnoremap <C-D-l> :action NextTab<CR>
+else
+  nnoremap <C-A-h> :action PreviousTab<CR>   
+  nnoremap <C-A-l> :action NextTab<CR>
 endif
+
+" ------------------------------------------------------------------------------
+" COMMAND K + <ACTION>
+" ------------------------------------------------------------------------------
+if has("macunix")
+  nnoremap <D-k><D-r> :action RevealIn<CR>
+  nnoremap <D-k><D-e> :action SelectInProjectView<CR>
+  nnoremap <D-k><D-p> :action PinActiveEditorTab<CR>
+ 
+  nnoremap <D-k><D-m> :action RiderCollapseToDefinitions<CR>
+  nnoremap <D-k><D-0> :action CollapseAllRegions<CR>
+
+  nnoremap <D-k><D-f> :action ReformatCode<CR>
+  
+else
+  nnoremap <A-k><A-e> :action SelectInProjectView<CR>
+  nnoremap <A-k><A-p> :action PinActiveEditorTab<CR>
+
+  nnoremap <A-k><A-m> :action RiderCollapseToDefinitions<CR>
+  nnoremap <A-k><A-0> :action CollapseAllRegions<CR>
+
+  nnoremap <A-k><C-r> :action RevealIn<CR> " -- AUTOHOTKEY CONFLICT (RELOAD)
+  nnoremap <A-k><C-f> :action ReformatCode<CR>;
+
+  nnoremap <C-c> "+y
+  vnoremap <C-c> "+y
+  " nnoremap <C-v> "+p
+  " vnoremap <C-v> "+p
+  
+  noremap <C-w> :action CloseContent<CR>
+endif
+
+nnoremap <F3>    :action OpenInAssociatedApplication<CR>
+nnoremap <C-k><C-o> :action CIDR.Lang.SwitchHeaderSource<CR>
+
 
 " ------------------------------------------------------------------------------
 " Leader mappings

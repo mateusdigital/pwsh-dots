@@ -248,7 +248,9 @@ function ll() { & "${_CORE_UTILS_DIR}ls" -al @args; }
 ## Copy
 
 ## -----------------------------------------------------------------------------
-function cp() { & "${_CORE_UTILS_DIR}cp" @args; }
+if($IsWindows) { 
+  function cp() { & "${_CORE_UTILS_DIR}cp" @args; }
+}
 
 
 ## Move
@@ -537,6 +539,18 @@ function show-wifi-password()
   }
 
   return "";
+}
+
+## ------------------------------------------------------------------------------ 
+function mac-add-spacer-to-dock()
+{
+  if (-not $IsMacOS) {
+    Write-Output "Not implemented for non-macos";
+    return;
+  }
+
+  defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="small-spacer-tile";}'; 
+  killall Dock;
 }
 
 
@@ -1068,19 +1082,14 @@ function _update_prompt()
 {
   $last_cmd_sucessfull = $?
 
-  $location = Get-Location;
-  $user     = "$env:USERNAME";
-  $hostname = hostname;
+  $location  = Get-Location;
+  $user      = "$env:USERNAME";
+  $user_home = if($HOME) { $HOME } else { $env:USERPROFILE };
+  $hostname  = hostname;
 
   $git_info = $(__update_ps1_git);
-
   $smile_face = if ($last_cmd_sucessfull) { ":)" }else { ":(" }
-
-  ## Make the $HOME be just "~".
-  if ($location.Path -like "$env:USERPROFILE*") {
-    $subpath = $location.Path.Substring($env:USERPROFILE.Length);
-    $location = "~${subpath}";
-  }
+  $location = $location.Path.Replace($user_home, "~");
 
   if ($git_info.Length -gt 0) {
     $git_info = " - (${git_info}) - ";

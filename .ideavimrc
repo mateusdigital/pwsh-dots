@@ -51,7 +51,8 @@ set hlsearch
 " ------------------------------------------------------------------------------
 set clipboard=unnamedplus
 set textwidth=80
-vnoremap p "_dP    ; NOT COPY THE TEXT BELLOW THE PASTED...
+""  NOT COPY THE TEXT BELLOW THE PASTED...
+vnoremap p "_dP    
 
 
 " ------------------------------------------------------------------------------

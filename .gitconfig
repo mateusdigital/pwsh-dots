@@ -112,7 +112,7 @@
     ui = auto
 
 [credential]
-    helper = cache --timeout=86400
+	helper = osxkeychain
 
 [credential "https://azuredevops.pine.com"]
 	provider = generic
@@ -127,6 +127,7 @@
     # Include summaries of merged commits in newly created merge commit messages
     log = true
 
+	guitool = meld
 [push]
     # https://git-scm.com/docs/git-config#git-config-pushdefault
     default = simple
@@ -171,5 +172,5 @@
 [safe]
 	directory = *
 [gui]
-	fontui   = -family \"Segoe UI\"    -size 10 -weight normal -slant roman -underline 0 -overstrike 0
-	fontdiff = -family \"Courier New\" -size 11 -weight normal -slant roman -underline 0 -overstrike 0
+	fontui = -family .AppleSystemUIFont -size 11 -weight normal -slant roman -underline 0 -overstrike 0
+	fontdiff = -family \"JetBrainsMono Nerd Font Mono\" -size 11 -weight normal -slant roman -underline 0 -overstrike 0
